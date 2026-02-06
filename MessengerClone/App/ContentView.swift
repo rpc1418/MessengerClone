@@ -5,20 +5,29 @@
 //  Created by rentamac on 03/02/2026.
 //
 
+
 import SwiftUI
 
 struct ContentView: View {
+    @EnvironmentObject var router: AppRouter
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationStack(path: $router.path) {
+//            HomeView() // Landing screen
+            Text("Hello World!")
+                .navigationDestination(for: Route.self) {
+                    route in
+                    Group {
+                        switch route {
+                        case .NewChatViewNav: PeopleView()
+                        case .developerView: Text("Hello World!")
+                        }
+                    }
+                }
         }
-        .padding()
+        
     }
 }
 
 #Preview {
-    ContentView()
+    ContentView().environmentObject(AppRouter())
 }
