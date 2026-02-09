@@ -1,0 +1,100 @@
+//
+//  FirestoreService.swift
+//  MessengerClone
+//
+//  Created by rentamac on 2/6/26.
+//
+
+
+import FirebaseFirestore
+import FirebaseAuth
+
+final class FirestoreService {
+    static let shared = FirestoreService()
+    private init() {}
+    
+    let db = Firestore.firestore()
+    
+    func normalizePhone(_ phone: String) -> String {
+        let normalized = phone.replacingOccurrences(of: " ", with: "")
+            .replacingOccurrences(of: "-", with: "")
+            .replacingOccurrences(of: "(", with: "")
+            .replacingOccurrences(of: ")", with: "")
+        return normalized
+    }
+    
+    func saveUserProfile(
+        firstName: String,
+        lastName: String?,
+        about: String?,
+        phoneNumber: String,
+        isNewUser: Bool = false
+    ) async throws {
+        let normalizedPhone = normalizePhone(phoneNumber)
+        let userRef = db.collection("users").document(normalizedPhone)
+        
+        print("Firestore: Phone document \(normalizedPhone)")
+        
+        let snapshot = try await userRef.getDocument()
+        
+        if snapshot.exists && !isNewUser {
+            print("Existing user - No update needed...")
+//            try await userRef.updateData([
+//                "lastLogin": Timestamp(),
+//                "phoneNumber": normalizedPhone
+//            ])
+        } else {
+            print("New user registration")
+            let uid = Auth.auth().currentUser?.uid
+            
+            let userData: [String: Any] = [
+                "uid": uid,
+                "phoneNumber": normalizedPhone,
+                "firstName": firstName,
+                "lastName": lastName ?? "",
+                "about": about ?? "",
+                "createdAt": Timestamp(),
+                "profileURL": nil as String?
+            ]
+            try await userRef.setData(userData, merge: true)
+            print("Profile created: users/\(normalizedPhone)")
+        }
+    }
+
+    func fetchUserData(phoneNumber: String) async throws -> AppUser {
+        let normalizedPhone = normalizePhone(phoneNumber)
+        let userRef = db.collection("users").document(normalizedPhone)
+
+        let snapshot = try await userRef.getDocument()
+
+        guard snapshot.exists else {
+            throw NSError(
+                domain: "FirestoreError",
+                code: 404,
+                userInfo: [NSLocalizedDescriptionKey: "User not found"]
+            )
+        }
+
+        guard let data = snapshot.data() else {
+            throw NSError(
+                domain: "FirestoreError",
+                code: 500,
+                userInfo: [NSLocalizedDescriptionKey: "No user data found"]
+            )
+        }
+
+        let user = AppUser(
+            id: snapshot.documentID,
+            uid: data["uid"] as? String ?? "",
+            firstName: data["firstName"] as? String ?? "",
+            lastName: data["lastName"] as? String ?? "",
+            phoneNumber: data["phoneNumber"] as? String ?? "",
+            about: data["about"] as? String ?? "",
+            profileURL: data["profileURL"] as? String,
+            createdAt: data["createdAt"] as? Timestamp ?? Timestamp()
+        )
+
+        return user
+    }
+
+}
