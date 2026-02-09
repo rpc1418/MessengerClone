@@ -18,7 +18,7 @@ struct ContentView: View {
                     route in
                     Group {
                         switch route {
-                        case .NewChatViewNav: PeopleView()
+                        case .NewChatViewNav: Text("People View")
                         case .developerView: Text("Hello World!")
                         }
                     }
