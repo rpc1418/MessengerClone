@@ -1,43 +1,54 @@
-//
-//  HomeBottomTabView.swift
-//  MessengerClone
-//
-//  Created by rentamac on 2/5/26.
-//
-
 import SwiftUI
 
 struct HomeBottomTabView: View {
+
+    @Binding var selectedTab: AppTab
+
     var body: some View {
         HStack {
-            Spacer()
-
-            VStack {
-                Image(systemName: "message.fill")
-                Text("Chats")
-                    .font(.caption)
-            }
-            .foregroundColor(.black)
+            tabButton(
+                tab: .chats,
+                icon: selectedTab == .chats ? "message.fill" : "message",
+                title: "Chats"
+            )
 
             Spacer()
 
-            VStack {
-                Image(systemName: "person.2")
-                Text("People")
-                    .font(.caption)
-            }
+            tabButton(
+                tab: .people,
+                icon: selectedTab == .people ? "person.2.fill" : "person.2",
+                title: "People"
+            )
 
             Spacer()
 
-            VStack {
-                Image(systemName: "safari")
-                Text("Discover")
-                    .font(.caption)
-            }
-
-            Spacer()
+            tabButton(
+                tab: .discover,
+                icon: selectedTab == .discover ? "safari.fill" : "safari",
+                title: "Discover"
+            )
         }
+        .padding(.horizontal,80)
         .padding(.vertical, 10)
         .background(Color(.systemGray6))
+    }
+
+    private func tabButton(
+        tab: AppTab,
+        icon: String,
+        title: String
+    ) -> some View {
+        Button {
+            selectedTab = tab
+        } label: {
+            VStack(spacing: 4) {
+                Image(systemName: icon)
+                    .font(.title2)
+
+                Text(title)
+                    .font(.caption)
+            }
+            .foregroundColor(selectedTab == tab ? .primary : .secondary)
+        }
     }
 }

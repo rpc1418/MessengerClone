@@ -15,7 +15,6 @@ struct HomeView: View {
             HomeStoriesView()
             HomeChatListView()
             Spacer()
-            HomeBottomTabView()
         }
     }
 }
