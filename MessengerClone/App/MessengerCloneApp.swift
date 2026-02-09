@@ -9,9 +9,10 @@ import SwiftUI
 
 @main
 struct MessengerCloneApp: App {
+    @StateObject var router: AppRouter = AppRouter()
     var body: some Scene {
         WindowGroup {
-
+            ContentView().environmentObject(router)
         }
     }
 }
