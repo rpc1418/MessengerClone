@@ -13,7 +13,8 @@ struct ContentView: View {
     var body: some View {
         NavigationStack(path: $router.path) {
 //            HomeView() // Landing screen
-            Text("Hello World!")
+//            Text("Hello World!")
+            RootView()
                 .navigationDestination(for: Route.self) {
                     route in
                     Group {

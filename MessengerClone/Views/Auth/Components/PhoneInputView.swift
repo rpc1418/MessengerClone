@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-/// Phone number input with country code selector
 struct PhoneInputView: View {
     @Binding var countryCode: String
     @Binding var phoneNumber: String

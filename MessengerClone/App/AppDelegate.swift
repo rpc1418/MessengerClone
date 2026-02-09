@@ -8,6 +8,7 @@
 
 import SwiftUI
 import FirebaseCore
+import FirebaseAuth
 
 class AppDelegate: NSObject, UIApplicationDelegate {
   func application(_ application: UIApplication,
@@ -29,4 +30,31 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         print("App entering foreground")
     }
 
+    func application(_ application: UIApplication,
+                    didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+                    fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        print("AppDelegate: Received remote notification")
+        if Auth.auth().canHandleNotification(userInfo) {
+            print("Firebase Auth handled notification")
+            completionHandler(.newData)
+        } else {
+            completionHandler(.noData)
+        }
+    }
+    
+    func application(_ application: UIApplication,
+                    didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        print("AppDelegate: Registered for remote notifications")
+    }
+    
+    func application(_ application: UIApplication,
+                    didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print("AppDelegate: Failed to register remote notifications: \(error.localizedDescription)")
+    }
 }
+
+
+
+
+
+
