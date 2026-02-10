@@ -6,14 +6,12 @@
 //
 import SwiftUI
 
-import SwiftUI
-
 struct PeopleView: View {
     @EnvironmentObject var router: AppRouter
     @StateObject private var viewModel = ContactsViewModel()
     var body: some View {
         ZStack{
-            Color.background.ignoresSafeArea(.all)
+            Color(.systemBackground).ignoresSafeArea()
            
                 VStack(spacing:0)   {
                     HStack{
@@ -102,6 +100,5 @@ struct PeopleView: View {
             
     }
 }
-
 
 

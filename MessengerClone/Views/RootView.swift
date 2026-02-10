@@ -12,39 +12,70 @@ struct RootView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var appRouter: AppRouter
 
+    @State private var selectedTab: AppTab = .chats
+
     var body: some View {
-        Group {
 
-            // Not logged in
-            if authViewModel.currentUser == nil {
-                LoginView()
-//                    .environmentObject(authViewModel)
-            }
+        // 🔹 NOT logged in
+        if authViewModel.currentUser == nil {
+            LoginView()
+        }
 
-            // Logged in, checking Firestore
-            else if authViewModel.userExists == nil {
-                ProgressView("Loading...")
-            }
+        // 🔹 Logged in, checking Firestore
+        else if authViewModel.userExists == nil {
+            ProgressView("Loading...")
+        }
 
-            // Logged in, profile exists
-            else if authViewModel.userExists == true {
-//                ContentView()
-//                Home()
-                Text("HomeView")
-                                Button("Sign Out!!!"){
-                                    authViewModel.signOut()
-                                }
-                Button("Create new Chat!!!"){
-                    appRouter.navigate(to: .NewChatViewNav)
+        // 🔹 Logged in & profile exists → MAIN APP
+        else if authViewModel.userExists == true {
+
+            NavigationStack(path: $appRouter.path) {
+
+                Group {
+                    switch selectedTab {
+                    case .chats:
+                        HomeView()
+
+                    case .people:
+                        PeopleView()
+
+                    case .discover:
+                        DiscoverView()
+                    }
                 }
-//                    .environmentObject(authViewModel)
-            }
+                .navigationDestination(for: Route.self) { route in
+                    switch route {
+                    case .NewChatViewNav:
+                        PeopleView()
 
-            // Logged in, profile missing
-            else {
-                RegistrationView()
-//                    .environmentObject(authViewModel)
+                    case .developerView:
+                        Text("Developer View")
+                    }
+                }
             }
+            // ✅ STATIC bottom tab bar (never moves)
+            .safeAreaInset(edge: .bottom) {
+                HomeBottomTabView(selectedTab: $selectedTab)
+            }
+        }
+
+        // 🔹 Logged in, profile missing
+        else {
+            RegistrationView()
         }
     }
 }
+
+//#Preview {
+//    let authVM = AuthViewModel()
+//    let router = AppRouter()
+//
+//    // 🔹 Mock logged-in state
+//    authVM.currentUser = AppUser.preview
+//    authVM.userExists = true
+//
+//    RootView()
+//        .environmentObject(authVM)
+//        .environmentObject(router)
+//}
+//
