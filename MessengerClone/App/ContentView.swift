@@ -6,32 +6,19 @@ struct ContentView: View {
     @State private var selectedTab: AppTab = .chats
 
     var body: some View {
-        ZStack(alignment: .bottom) {
-
-            // 🔹 Navigation content (changes)
-            NavigationStack(path: $router.path) {
-                Group {
-                    switch selectedTab {
-                    case .chats:
-                        HomeView()
-                    case .people:
-                        PeopleView()
-                    case .discover:
-                        DiscoverView()
+        NavigationStack(path: $router.path) {
+//            HomeView() // Landing screen
+//            Text("Hello World!")
+            RootView()
+                .navigationDestination(for: Route.self) {
+                    route in
+                    Group {
+                        switch route {
+                        case .NewChatViewNav: PeopleView()
+                        case .developerView: Text("Hello World!")
+                        }
                     }
                 }
-                .navigationDestination(for: Route.self) { route in
-                    switch route {
-                    case .NewChatViewNav:
-                        PeopleView()
-                    case .developerView:
-                        Text("Developer View")
-                    }
-                }
-            }
-
-            // 🔹 Fixed Bottom Tab Bar (STATIC)
-            HomeBottomTabView(selectedTab: $selectedTab)
         }
         .ignoresSafeArea(edges: .bottom)
     }
