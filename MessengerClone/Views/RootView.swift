@@ -37,6 +37,9 @@ struct RootView: View {
                 Button("Create new Chat!!!"){
                     appRouter.navigate(to: .newChat)
                 }
+                Button("View Profile!!!"){
+                    appRouter.navigate(to: .profileView)
+                }
 //                    .environmentObject(authViewModel)
             }
 
