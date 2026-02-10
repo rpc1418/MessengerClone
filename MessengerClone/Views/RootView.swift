@@ -10,6 +10,7 @@ import SwiftUI
 struct RootView: View {
 
     @EnvironmentObject var authViewModel: AuthViewModel
+    @EnvironmentObject var appRouter: AppRouter
 
     var body: some View {
         Group {
@@ -28,7 +29,14 @@ struct RootView: View {
             // Logged in, profile exists
             else if authViewModel.userExists == true {
 //                ContentView()
-                Home()
+//                Home()
+                Text("HomeView")
+                                Button("Sign Out!!!"){
+                                    authViewModel.signOut()
+                                }
+                Button("Create new Chat!!!"){
+                    appRouter.navigate(to: .NewChatViewNav)
+                }
 //                    .environmentObject(authViewModel)
             }
 
