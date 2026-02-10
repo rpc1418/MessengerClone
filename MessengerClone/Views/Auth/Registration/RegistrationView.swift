@@ -18,7 +18,7 @@ struct RegistrationView: View {
     @State private var phoneNumber = ""
 
     var body: some View {
-        NavigationStack {
+//        NavigationStack {
             ScrollView {
                 VStack(spacing: 15) {
                     // MARK: - Header
@@ -115,7 +115,7 @@ struct RegistrationView: View {
             }
         }
     }
-}
+//}
 
 #Preview {
     RegistrationView()

@@ -15,7 +15,7 @@ struct LoginView: View {
     @State private var showRegistration = false
     
     var body: some View {
-        NavigationStack {
+//        NavigationStack {
             ZStack {
                 LinearGradient(
                     gradient: Gradient(colors: [
@@ -91,7 +91,7 @@ struct LoginView: View {
             }
         }
     }
-}
+//}
 
 #Preview {
     LoginView()
