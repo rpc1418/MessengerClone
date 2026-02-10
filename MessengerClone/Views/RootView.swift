@@ -28,10 +28,7 @@ struct RootView: View {
             // Logged in, profile exists
             else if authViewModel.userExists == true {
 //                ContentView()
-                Text("HomeView")
-                Button("Sign Out!!!"){
-                    authViewModel.signOut()
-                }
+                Home()
 //                    .environmentObject(authViewModel)
             }
 
