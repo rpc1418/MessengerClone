@@ -5,12 +5,11 @@
 //  Created by rentamac on 2/6/26.
 //
 //
-
 import SwiftUI
 
 struct OTPVerificationView: View {
-
-    @ObservedObject var viewModel: AuthViewModel
+    @EnvironmentObject var router: AppRouter
+    @EnvironmentObject var viewModel: AuthViewModel
 
     let firstName: String
     let lastName: String
@@ -40,48 +39,29 @@ struct OTPVerificationView: View {
 
             OTPInputView(otp: $otp)
 
-//            PrimaryButton(
-//                title: viewModel.isLoading ? "Verifying..." : "Verify & Continue"
-//            ) {
-//                Task {
-//                    // 1️⃣ Verify OTP (login)
-//                    await viewModel.verifyOTP(otp)
-//
-//                    // 2️⃣ If registering, save profile
-//                    if !firstName.isEmpty {
-//                        try? await FirestoreService.shared.saveUserProfile(
-//                            firstName: firstName,
-//                            lastName: lastName.isEmpty ? nil : lastName,
-//                            about: about.isEmpty ? nil : about,
-//                            phoneNumber: phoneNumber,
-//                            isNewUser: true
-//                        )
-//                    }
-//                }
-//            }
             PrimaryButton(
                 title: viewModel.isLoading ? "Verifying..." : "Verify & Continue"
             ) {
                 Task {
-                    // 1️⃣ Verify OTP (Firebase Auth login)
                     await viewModel.verifyOTP(otp)
 
-                    // 2️⃣ If registering, save profile
-                    if !firstName.isEmpty {
-                        try? await FirestoreService.shared.saveUserProfile(
-                            firstName: firstName,
-                            lastName: lastName.isEmpty ? nil : lastName,
-                            about: about.isEmpty ? nil : about,
-                            phoneNumber: phoneNumber,
-                            isNewUser: true
-                        )
+                    if viewModel.errorMessage == nil {
+                        if !firstName.isEmpty {
+                            try? await FirestoreService.shared.saveUserProfile(
+                                firstName: firstName,
+                                lastName: lastName.isEmpty ? nil : lastName,
+                                about: about.isEmpty ? nil : about,
+                                phoneNumber: phoneNumber,
+                                isNewUser: true
+                            )
+                            await viewModel.checkPhoneExists(phoneNumber)
+                        }
 
-                        // 🔥 THIS WAS MISSING
-                        await viewModel.checkPhoneExists(phoneNumber)
+                        // Either rely on auth state or explicitly reset navigation
+                        router.goToHome()
                     }
                 }
             }
-
             .disabled(otp.count < 6 || viewModel.isLoading)
             .opacity(otp.count == 6 && !viewModel.isLoading ? 1 : 0.5)
 

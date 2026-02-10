@@ -15,53 +15,38 @@ struct RootView: View {
     @State private var selectedTab: AppTab = .chats
 
     var body: some View {
+        Group {
 
-        // 🔹 NOT logged in
-        if authViewModel.currentUser == nil {
-            LoginView()
-        }
-
-        // 🔹 Logged in, checking Firestore
-        else if authViewModel.userExists == nil {
-            ProgressView("Loading...")
-        }
-
-        // 🔹 Logged in & profile exists → MAIN APP
-        else if authViewModel.userExists == true {
-
-            NavigationStack(path: $appRouter.path) {
-
-                Group {
-                    switch selectedTab {
-                    case .chats:
-                        HomeView()
-
-                    case .people:
-                        PeopleView()
-
-                    case .discover:
-                        DiscoverView()
-                    }
-                }
-                .navigationDestination(for: Route.self) { route in
-                    switch route {
-                    case .NewChatViewNav:
-                        PeopleView()
-
-                    case .developerView:
-                        Text("Developer View")
-                    }
-                }
+            // Not logged in
+            if authViewModel.currentUser == nil {
+                LoginView()
+//                    .environmentObject(authViewModel)
             }
-            // ✅ STATIC bottom tab bar (never moves)
-            .safeAreaInset(edge: .bottom) {
-                HomeBottomTabView(selectedTab: $selectedTab)
-            }
-        }
 
-        // 🔹 Logged in, profile missing
-        else {
-            RegistrationView()
+            // Logged in, checking Firestore
+            else if authViewModel.userExists == nil {
+                ProgressView("Loading...")
+            }
+
+            // Logged in, profile exists
+            else if authViewModel.userExists == true {
+//                ContentView()
+//                Home()
+                Text("HomeView")
+                                Button("Sign Out!!!"){
+                                    authViewModel.signOut()
+                                }
+                Button("Create new Chat!!!"){
+                    appRouter.navigate(to: .newChat)
+                }
+//                    .environmentObject(authViewModel)
+            }
+
+            // Logged in, profile missing
+            else {
+                RegistrationView()
+//                    .environmentObject(authViewModel)
+            }
         }
     }
 }

@@ -8,9 +8,15 @@
 import Combine
 import SwiftUI
 enum Route: Hashable {
-    case NewChatViewNav
+    case login
+    case phoneLogin
+    case otpVerification(phone: String, firstName: String?, lastName: String?, about: String?)
+    case registration
+    case home
+    case newChat
     case developerView
 }
+
 
 
 class AppRouter: ObservableObject{
