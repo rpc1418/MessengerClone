@@ -15,6 +15,7 @@ enum Route: Hashable {
     case home
     case newChat
     case developerView
+    case profileView
 }
 
 
