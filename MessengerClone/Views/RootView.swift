@@ -35,7 +35,7 @@ struct RootView: View {
                                     authViewModel.signOut()
                                 }
                 Button("Create new Chat!!!"){
-                    appRouter.navigate(to: .NewChatViewNav)
+                    appRouter.navigate(to: .newChat)
                 }
 //                    .environmentObject(authViewModel)
             }
