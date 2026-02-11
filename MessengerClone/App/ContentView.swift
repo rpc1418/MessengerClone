@@ -36,6 +36,9 @@ struct ContentView: View {
                         PeopleView()
                     case .developerView:
                         Text("Hello World!")
+                    case .profileView:
+                        ProfileView()
+                        
                     }
                 }
         }
