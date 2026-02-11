@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct ContentView: View {
+
     @EnvironmentObject var router: AppRouter
+    @State private var selectedTab: AppTab = .chats
 
     var body: some View {
         NavigationStack(path: $router.path) {

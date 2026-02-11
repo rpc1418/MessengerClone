@@ -4,7 +4,6 @@
 //
 //  Created by rentamac on 04/02/2026.
 //
-
 import SwiftUI
 
 struct PeopleView: View {
@@ -12,7 +11,7 @@ struct PeopleView: View {
     @StateObject private var viewModel = ContactsViewModel()
     var body: some View {
         ZStack{
-            Color.background.ignoresSafeArea(.all)
+            Color(.systemBackground).ignoresSafeArea()
            
                 VStack(spacing:0)   {
                     HStack{
@@ -101,6 +100,5 @@ struct PeopleView: View {
             
     }
 }
-
 
 

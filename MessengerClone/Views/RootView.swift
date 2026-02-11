@@ -28,26 +28,14 @@ struct RootView: View {
 
             // Logged in, profile exists
             else if authViewModel.userExists == true {
-//                ContentView()
-//                Home()
-                Text("HomeView")
-                                Button("Sign Out!!!"){
-                                    authViewModel.signOut()
-                                }
-                Button("Create new Chat!!!"){
-                    appRouter.navigate(to: .newChat)
-                }
-                Button("View Profile!!!"){
-                    appRouter.navigate(to: .profileView)
-                }
-//                    .environmentObject(authViewModel)
-            }
+                HomeView()
 
-            // Logged in, profile missing
+            }
             else {
                 RegistrationView()
-//                    .environmentObject(authViewModel)
             }
         }
     }
 }
+
+
