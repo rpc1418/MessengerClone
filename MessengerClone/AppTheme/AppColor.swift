@@ -23,4 +23,5 @@ extension Color {
     // Accent
     static let accentPrimary = Color(black)
     static let statusOnline = Color(green)
+    static let a = Color(black)
 }
