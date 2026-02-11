@@ -7,29 +7,27 @@ struct HomeView: View {
 
     var body: some View {
 
-        NavigationStack(path: $appRouter.path) {
+        VStack(spacing: 0) {
 
-            VStack(spacing: 0) {
+            // STATIC TOP BAR
+            HomeTopBarView(
+                selectedTab: selectedTab,
+                onProfileTap: handleProfileTap
+            )
 
-                // 🔹 STATIC TOP BAR
-                HomeTopBarView(
-                    selectedTab: selectedTab,
-                    onProfileTap: handleProfileTap
-                )
-
-                // 🔹 DYNAMIC CONTENT
-                currentScreen
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(Color(.systemGroupedBackground))
-            }
-            .navigationBarHidden(true)
+            // DYNAMIC CONTENT
+            currentScreen
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color(.systemGroupedBackground))
         }
+        .navigationBarHidden(true)
         .safeAreaInset(edge: .bottom) {
             HomeBottomTabView(selectedTab: $selectedTab)
         }
         .ignoresSafeArea(.keyboard)
     }
 }
+
 private extension HomeView {
 
     @ViewBuilder
@@ -52,7 +50,7 @@ private extension HomeView {
         // Temporary action until Settings is created
         print("Profile tapped")
         
-        // Later you can replace this with:
+        // Later we can replace this with:
         // appRouter.navigate(to: .settings)
     }
 }

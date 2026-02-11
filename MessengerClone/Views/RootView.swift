@@ -12,8 +12,6 @@ struct RootView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var appRouter: AppRouter
 
-    @State private var selectedTab: AppTab = .chats
-
     var body: some View {
         Group {
 
@@ -40,16 +38,4 @@ struct RootView: View {
     }
 }
 
-//#Preview {
-//    let authVM = AuthViewModel()
-//    let router = AppRouter()
-//
-//    // 🔹 Mock logged-in state
-//    authVM.currentUser = AppUser.preview
-//    authVM.userExists = true
-//
-//    RootView()
-//        .environmentObject(authVM)
-//        .environmentObject(router)
-//}
-//
+
