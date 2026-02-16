@@ -37,7 +37,7 @@ private extension HomeView {
             ChatView()
 
         case .people:
-            PeopleView()
+            RegPeopleView()
 
         case .discover:
             DiscoverView()

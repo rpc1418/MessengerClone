@@ -1,12 +1,12 @@
 import SwiftUI
 
 struct HomeTopBarView: View {
-    
+    @EnvironmentObject var appRouter : AppRouter
     let selectedTab: AppTab
     var profileImage: Image? = nil
     var onProfileTap: (() -> Void)? = nil
     var onFirstActionTap: (() -> Void)? = nil
-    var onSecondActionTap: (() -> Void)? = nil
+//    var onSecondActionTap: (() -> Void)? = nil
 
     var body: some View {
         HStack {
@@ -29,7 +29,7 @@ struct HomeTopBarView: View {
                 
                 if let secondIcon = secondIcon {
                     actionButton(systemName: secondIcon) {
-                        onSecondActionTap?()
+                        onSecondActionTap()
                     }
                 }
             }
@@ -117,6 +117,19 @@ private extension HomeTopBarView {
             }
         }
         .buttonStyle(.plain)
+    }
+    
+    func onSecondActionTap() {
+        switch selectedTab {
+        case .chats:
+            appRouter.navigate(to: .newChat)
+
+        case .people:
+            appRouter.navigate(to: .newChat)
+
+        case .discover:
+            break
+        }
     }
 
 }
