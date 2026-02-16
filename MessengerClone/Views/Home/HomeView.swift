@@ -28,13 +28,14 @@ struct HomeView: View {
     }
 }
 
+
 private extension HomeView {
 
     @ViewBuilder
     var currentScreen: some View {
         switch selectedTab {
         case .chats:
-            ChatView()
+            ChatsView()
 
         case .people:
             PeopleView()
@@ -43,14 +44,10 @@ private extension HomeView {
             DiscoverView()
         }
     }
-}
-private extension HomeView {
 
     func handleProfileTap() {
-        // Temporary action until Settings is created
-        print("Profile tapped")
-        
-        // Later we can replace this with:
-        // appRouter.navigate(to: .settings)
+        appRouter.navigate(to: .profileView)
     }
 }
+
+
