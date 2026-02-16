@@ -7,95 +7,117 @@
 
 import Contacts
 import Combine
+import FirebaseFirestore
 
 class ContactsViewModel: ObservableObject {
-    @Published var contacts: [PhoneContact] = []
+    @Published var contacts: [RegisteredContact] = []
     @Published var searchText: String = ""
     @Published var isLoading: Bool = false
     @Published var selectedContactIDs: Set<UUID> = []
     @Published var isSelectionMode: Bool = false
     @Published var msgFromViewModel: String = ""
+//    private var newContact: RegisteredContact? = nil
 
     private let store = CNContactStore()
+    
+    private let persistence = PersistenceController.shared
 
-    func requestAndFetchContacts() {
-        isLoading = true
-        let status = CNContactStore.authorizationStatus(for: .contacts)
+        init() {
+            Task {
+                await requestAndSyncContacts()
+            }
+        }
 
-        switch status {
-        case .authorized:
-            fetchContacts()
+        
+        func requestAndSyncContacts() async {
+            isLoading = true
 
-        default:
-            store.requestAccess(for: .contacts) { granted, _ in
-                if granted {
-                    Task{
-                         self.fetchContacts()
-                        
-                    }
+            let status = CNContactStore.authorizationStatus(for: .contacts)
+
+            switch status {
+            case .authorized:
+                await syncContacts()
+
+            default:
+                let granted = try? await store.requestAccess(for: .contacts)
+                if granted == true {
+                    await syncContacts()
                 } else {
+                    await MainActor.run {
+                        self.msgFromViewModel = "Please allow access to contacts in settings."
+                        self.isLoading = false
+                    }
+                }
+            }
+            isLoading = false
+        }
+
+        
+        private func syncContacts() async {
+            do {
+                let deviceNumbers = try fetchDistinctPhoneNumbers()
+                let normalizedNumbers = deviceNumbers.map { normalizePhone($0) }
+
+                let existingContacts = persistence.fetchContactsDetails()
+                let existingNumbersSet = Set(existingContacts.compactMap { $0.idPhNo })
+
+                for number in normalizedNumbers where !existingNumbersSet.contains(number) {
+                    do {
+                        let user = try await FirestoreService.shared.fetchUserData(phoneNumber: number)
+                        PersistenceController.shared.createRegCon(appUser: user, isReg: true)
+                    } catch {
+                        let dummyUser = AppUser(
+                            id: "",
+                            uid: "",
+                            firstName: number,
+                            lastName: "",
+                            phoneNumber: number,
+                            about: "",
+                            profileURL: "",
+                            createdAt: Timestamp()
+                        )
+                        PersistenceController.shared.createRegCon(appUser: dummyUser, isReg: false)
+                    }
+                }
+
+                
+                let updatedContacts = persistence.fetchContactsDetails()
+
+                await MainActor.run {
+                    self.contacts = updatedContacts
                     self.isLoading = false
-                    self.msgFromViewModel=" Please allow the app to access your contacts in settings."
-                    print("no access")
-                }
-            }
-
-//        default:
-//            self.isLoading = false
-//            self.msgFromViewModel=""
-//            print("Contacts access denied or restricted")
-        }
-    }
-
-    private func fetchContacts() {
-        isLoading = true
-        print("in fetch")
-        msgFromViewModel = ""
-        let keys: [CNKeyDescriptor] = [
-            CNContactGivenNameKey as CNKeyDescriptor,
-            CNContactFamilyNameKey as CNKeyDescriptor,
-            CNContactPhoneNumbersKey as CNKeyDescriptor
-        ]
-
-        let request = CNContactFetchRequest(keysToFetch: keys)
-        var results: [PhoneContact] = []
-
-        do {
-            try store.enumerateContacts(with: request) { contact, _ in
-                let name = "\(contact.givenName) \(contact.familyName)"
-                let phones = contact.phoneNumbers.map {
-                    $0.value.stringValue
                 }
 
-                results.append(
-                    PhoneContact(name: name, phoneNumbers: phones)
-                )
+            } catch {
+                await MainActor.run {
+                    self.msgFromViewModel = "Failed to sync contacts"
+                    self.isLoading = false
+                }
             }
-
-            DispatchQueue.main.async {
-                self.contacts = results
-            }
-        } catch {
-            print("Failed to fetch contacts:", error)
-            msgFromViewModel = ""
         }
-        isLoading = false
-        msgFromViewModel = ""
-    }
-    
-    func loadDummyContacts()-> [PhoneContact]{
-            let dummy = [
-                PhoneContact(name: "Alice Johnson", phoneNumbers: ["+1 555-123-4567"]),
-                PhoneContact(name: "Bob Smith", phoneNumbers: ["+1 555-987-6543", "+1 555-000-1111"]),
-                PhoneContact(name: "Charlie Brown", phoneNumbers: ["+44 20 7946 0958"]),
-                PhoneContact(name: "David Lee", phoneNumbers: ["+91 98765 43210"]),
-                PhoneContact(name: "Eva Green", phoneNumbers: ["+1 555-222-3333"])
+
+
+        // MARK: - Fetch Device Numbers
+        private func fetchDistinctPhoneNumbers() throws -> [String] {
+            let keys: [CNKeyDescriptor] = [
+                CNContactPhoneNumbersKey as CNKeyDescriptor
             ]
-            return  dummy
+
+            let request = CNContactFetchRequest(keysToFetch: keys)
+
+            var numbers: Set<String> = []
+
+            try store.enumerateContacts(with: request) { contact, _ in
+                for phone in contact.phoneNumbers {
+                    numbers.insert(phone.value.stringValue)
+                }
+            }
+
+            return Array(numbers)
         }
     
     
-    var filteredContacts: [PhoneContact] {
+    var filteredRegContacts: [RegisteredContact] {
         
         if searchText.isEmpty {
             return contacts
@@ -106,16 +128,70 @@ class ContactsViewModel: ObservableObject {
         let digitsOnlyTerm = term.filter { $0.isNumber }
 
         return contacts.filter { contact in
-            let nameMatch = contact.name.lowercased().contains(term)
+            let name = contact.firstName! + contact.lastName!
+            let nameMatch = name.lowercased().contains(term)
 
-            let phoneMatch = contact.phoneNumbers.contains { number in
-                let digitsOnlyNumber = number.filter { $0.isNumber }
+            let phoneMatch: Bool = {
+                guard let phone = contact.idPhNo else { return false }
+
+                let digitsOnlyNumber = phone.filter { $0.isNumber }
+
                 return !digitsOnlyTerm.isEmpty &&
                        digitsOnlyNumber.contains(digitsOnlyTerm)
-            }
+            }()
+
 
             return nameMatch || phoneMatch
         }
     }
+    
+    func filteredContacts(type: Int = 0) -> [RegisteredContact] {
+        
+        var baseContacts: [RegisteredContact]
+        
+        switch type {
+        case 0:
+            baseContacts = contacts.filter { $0.isReg }
+        case 1:
+            baseContacts = contacts.filter { !$0.isReg }
+        default:
+            baseContacts = contacts
+        }
+        
+        if searchText.isEmpty {
+            return baseContacts
+        }
+        
+        let term = searchText.lowercased()
+        let digitsOnlyTerm = term.filter { $0.isNumber }
+        
+        return baseContacts.filter { contact in
+            let name = (contact.firstName ?? "") + (contact.lastName ?? "")
+            let nameMatch = name.lowercased().contains(term)
+            
+            let phoneMatch: Bool = {
+                guard let phone = contact.idPhNo else { return false }
+                let digitsOnlyNumber = phone.filter { $0.isNumber }
+                
+                return !digitsOnlyTerm.isEmpty &&
+                       digitsOnlyNumber.contains(digitsOnlyTerm)
+            }()
+            
+            return nameMatch || phoneMatch
+        }
+    }
+
+    
+    func normalizePhone(_ phone: String) -> String {
+        var digits = phone.filter { $0.isNumber }
+        
+        
+        if digits.hasPrefix("0") {
+            digits.removeFirst()
+        }
+        digits = "+91" + digits
+        return digits
+    }
+
 
 }

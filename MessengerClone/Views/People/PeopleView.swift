@@ -1,18 +1,23 @@
 //
-//  PeopleView.swift
+//  People.swift
 //  MessengerClone
 //
-//  Created by rentamac on 04/02/2026.
+//  Created by rentamac on 15/02/2026.
 //
+
+
 import SwiftUI
 
 struct PeopleView: View {
     @EnvironmentObject var router: AppRouter
-    @StateObject private var viewModel = ContactsViewModel()
+    @EnvironmentObject private var viewModel : ContactsViewModel
+    @EnvironmentObject var authViewModel: AuthViewModel
+    @State private var isMultiSelectEnabled = false
+     
+    
     var body: some View {
         ZStack{
             Color(.systemBackground).ignoresSafeArea()
-           
                 VStack(spacing:0)   {
                     HStack{
                         Text("To:")
@@ -34,26 +39,60 @@ struct PeopleView: View {
                     {
                         Spacer()
                         Text(viewModel.msgFromViewModel)
+                        Button("Clear the message"){
+                            viewModel.msgFromViewModel = ""
+                        }
                         Spacer()
                     }
                     
                     else {
-                        List(viewModel.filteredContacts) { contact in
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(contact.name)
-                                    .font(.headline)
-                                
-                                ForEach(contact.phoneNumbers, id: \.self) { phone in
-                                    Text(phone)
-                                        .font(.subheadline)
-                                        .foregroundColor(.gray)
+                        List() {
+
+                            Section("Registered Users") {
+                                ForEach(viewModel.filteredContacts(type: 0)) { contact in
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text(contact.fullName)
+                                            .font(.headline)
+                                        Text(contact.isReg ? "reg user" : "not reg user")
+
+                                        if let phone = contact.idPhNo {
+                                            Text(phone)
+                                                .font(.subheadline)
+                                                .foregroundColor(.gray)
+                                        }
+                                    }
+                                    .contentShape(Rectangle())
+                                    .onTapGesture {
+                                        print(contact.fullName)
+                                    }
                                 }
-                                .onTapGesture {
-                                    print(contact.name)
+                                
+                            }
+
+                            Section("Not Registered Users") {
+                                ForEach(viewModel.filteredContacts(type: 1), id: \.objectID) { contact in
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text(contact.fullName)
+                                            .font(.headline)
+                                        Text(contact.isReg ? "reg user" : "not reg user")
+
+                                        if let phone = contact.idPhNo {
+                                            Text(phone)
+                                                .font(.subheadline)
+                                                .foregroundColor(.gray)
+                                        }
+                                    }
+                                    .contentShape(Rectangle())
+                                    .onTapGesture {
+                                        print(contact.fullName)
+                                    }
                                 }
                             }
                         }
+                        .environment(\.editMode, .constant(isMultiSelectEnabled ? .active : .inactive))
                         .listStyle(.plain)
+
+
                     }
                         
                         
@@ -66,11 +105,20 @@ struct PeopleView: View {
                     content: {
                         ToolbarItem(placement: .topBarLeading){
                             Button(action:{
-                                router.goToHome()
+                                if isMultiSelectEnabled{
+                                    isMultiSelectEnabled.toggle()
+                                }else{
+                                    router.goBack()
+                                }
+                                
                             }){
-                                Text("Cancel")
+                                if isMultiSelectEnabled{
+                                    Text("Deselect\(viewModel.selectedContactIDs.count)")
+                                }else{
+                                    Text("Cancel")
+                                }
                             }
-                            .foregroundStyle(Color.foreground)
+                            .foregroundStyle(Color.blue)
                             .backgroundExtensionEffect(isEnabled: false)
                            
                         }
@@ -79,11 +127,15 @@ struct PeopleView: View {
                         }
                         ToolbarItem(placement: .topBarTrailing){
                             Button(action:{
-                                viewModel.requestAndFetchContacts()
+                                Task{
+                                    await viewModel.requestAndSyncContacts()
+                                }
+                                
+                                
                             }){
                                Image(systemName: "arrow.clockwise")
                             }
-                            .foregroundStyle(Color.foreground)
+                            .foregroundStyle(Color.blue)
                             .backgroundExtensionEffect(isEnabled: false)
                            
                         }
@@ -94,11 +146,15 @@ struct PeopleView: View {
             
         }
         .navigationBarBackButtonHidden()
-        .onAppear {
-            viewModel.requestAndFetchContacts()
-        }
+        
             
     }
 }
 
 
+
+extension RegisteredContact {
+    var fullName: String {
+        "\(firstName ?? "") \(lastName ?? "")"
+    }
+}

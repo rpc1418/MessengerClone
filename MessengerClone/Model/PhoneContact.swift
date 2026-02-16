@@ -7,8 +7,3 @@
 
 import Foundation
 
-struct PhoneContact: Identifiable {
-    let id = UUID()
-    let name: String
-    let phoneNumbers: [String]
-}
