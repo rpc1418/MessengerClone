@@ -7,6 +7,7 @@
 
 import SwiftUI
 struct ChatView: View {
+    var chat: Chat
     var body: some View {
         Text("ChatsView")
             .font(Font.largeTitle)

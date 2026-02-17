@@ -7,6 +7,7 @@
 
 
 import SwiftUI
+import CoreData
 
 struct PeopleView: View {
     @EnvironmentObject var router: AppRouter
@@ -14,6 +15,9 @@ struct PeopleView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @State private var isMultiSelectEnabled = false
      
+    @State private var inviteContact: RegisteredContact?
+    @State private var showInviteDialog = false
+
     
     var body: some View {
         ZStack{
@@ -46,48 +50,54 @@ struct PeopleView: View {
                     }
                     
                     else {
-                        List() {
-
+                        List(selection: $viewModel.selectedContactIDs) {
                             Section("Registered Users") {
-                                ForEach(viewModel.filteredContacts(type: 0)) { contact in
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        Text(contact.fullName)
-                                            .font(.headline)
-                                        Text(contact.isReg ? "reg user" : "not reg user")
+                                ForEach(viewModel.filteredContacts(type: 0), id: \.objectID) { contact in
+                                    ContactRowView(
+                                        contact: contact,
+                                        onTap: { tappedContact in
+                                            Task {
+                                                do {
+                                                    print("tapped")
+                                                    viewModel.isLoading = true
+                                                    let chat = try await viewModel.createChat(
+                                                        currentUserID: authViewModel.appUser!.uid,
+                                                        contact: tappedContact
+                                                    )
+                                                    viewModel.isLoading = false
+                                                    router.navigate(to: .chat(chat: chat))
+                                                    
+                                                    
+                                                } catch {
+                                                    viewModel.isLoading = false
+                                                    print("Failed to create/fetch chat:", error)
+                                                }
+                                            }
+                                        },
 
-                                        if let phone = contact.idPhNo {
-                                            Text(phone)
-                                                .font(.subheadline)
-                                                .foregroundColor(.gray)
-                                        }
-                                    }
-                                    .contentShape(Rectangle())
-                                    .onTapGesture {
-                                        print(contact.fullName)
-                                    }
+                                        isMultiSelectEnabled: $isMultiSelectEnabled,
+                                        selectedContactIDs: $viewModel.selectedContactIDs
+                                    )
                                 }
-                                
                             }
 
                             Section("Not Registered Users") {
                                 ForEach(viewModel.filteredContacts(type: 1), id: \.objectID) { contact in
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        Text(contact.fullName)
-                                            .font(.headline)
-                                        Text(contact.isReg ? "reg user" : "not reg user")
-
-                                        if let phone = contact.idPhNo {
-                                            Text(phone)
-                                                .font(.subheadline)
-                                                .foregroundColor(.gray)
-                                        }
-                                    }
-                                    .contentShape(Rectangle())
-                                    .onTapGesture {
-                                        print(contact.fullName)
-                                    }
+                                    ContactRowView(
+                                        contact: contact,
+                                        onTap: {
+                                            tappedContact in
+                                                
+                                                inviteContact = tappedContact
+                                                showInviteDialog = true
+                                            
+                                        },
+                                        isMultiSelectEnabled: $isMultiSelectEnabled,
+                                        selectedContactIDs: $viewModel.selectedContactIDs
+                                    )
                                 }
                             }
+
                         }
                         .environment(\.editMode, .constant(isMultiSelectEnabled ? .active : .inactive))
                         .listStyle(.plain)
@@ -146,15 +156,21 @@ struct PeopleView: View {
             
         }
         .navigationBarBackButtonHidden()
-        
+        .confirmationDialog(
+            "Invite \(inviteContact?.idPhNo ?? "") to MessengerClone?",
+            isPresented: $showInviteDialog,
+            titleVisibility: .visible
+        ) {
+            Button("Send SMS Invite") {
+                viewModel.sendInviteSMS(phone: inviteContact?.idPhNo ?? "")
+            }
+
+            Button("Cancel", role: .cancel) {}
+        }
+
             
     }
 }
 
 
 
-extension RegisteredContact {
-    var fullName: String {
-        "\(firstName ?? "") \(lastName ?? "")"
-    }
-}
