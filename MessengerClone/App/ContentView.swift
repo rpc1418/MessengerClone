@@ -38,7 +38,8 @@ struct ContentView: View {
                         Text("Hello World!")
                     case .profileView:
                         ProfileView()
-                        
+                    case .chat(let chat):
+                        ChatView(chat: chat)
                     }
                 }
         }

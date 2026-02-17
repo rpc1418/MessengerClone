@@ -7,7 +7,7 @@
 
 import FirebaseFirestore
 
-struct Chat: Identifiable{
+struct Chat: Identifiable, Hashable{
     let id: String
     let participants: [String]
     let isGroup: Bool

@@ -8,14 +8,17 @@
 import Contacts
 import Combine
 import FirebaseFirestore
+import CoreData
 
 class ContactsViewModel: ObservableObject {
     @Published var contacts: [RegisteredContact] = []
     @Published var searchText: String = ""
     @Published var isLoading: Bool = false
-    @Published var selectedContactIDs: Set<UUID> = []
+    @Published var selectedContactIDs: Set<NSManagedObjectID> = []
     @Published var isSelectionMode: Bool = false
     @Published var msgFromViewModel: String = ""
+    let chatService: ChatService = ChatService()
+    
 //    private var newContact: RegisteredContact? = nil
 
     private let store = CNContactStore()
@@ -191,6 +194,46 @@ class ContactsViewModel: ObservableObject {
         }
         digits = "+91" + digits
         return digits
+    }
+    
+    
+    
+    func sendInviteSMS(phone: String) {
+        let message = "Hey! Join me on MessengerClone. It is still under Dev"
+        let encodedMessage = message.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        if let url = URL(string: "sms:\(phone)&body=\(encodedMessage)") {
+            UIApplication.shared.open(url)
+        }
+    }
+
+    @MainActor
+    func createChat(
+        currentUserID: String,
+        contact: RegisteredContact
+    ) async throws -> Chat {
+        
+        let otherUserID = contact.databaseId
+        
+        let chats = try await chatService.fetchChatsForUser(userID: currentUserID)
+        
+        if let existingChat = chats.first(where: {
+            !$0.isGroup &&
+            $0.participants.count == 2 &&
+            $0.participants.contains(otherUserID!)
+        }) {
+            return existingChat
+        }
+        
+        let newChatID = try await chatService.createChat(
+            participants: [currentUserID, otherUserID!],
+            isGroup: false
+        )
+        
+        guard let newChat = try await chatService.fetchChat(by: newChatID) else {
+            throw NSError(domain: "Chat creation failed", code: 0)
+        }
+        
+        return newChat
     }
 
 
