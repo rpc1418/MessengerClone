@@ -17,7 +17,7 @@ struct PeopleView: View {
      
     @State private var inviteContact: RegisteredContact?
     @State private var showInviteDialog = false
-
+    @State private var groupName: String = ""
     
     var body: some View {
         ZStack{
@@ -31,6 +31,7 @@ struct PeopleView: View {
                             prompt: Text("Type name or number here")
                         )
                     }
+                    
                     .font(.headline)
                     .padding()
                     .background(Color.foreground.opacity(0.1))
@@ -50,6 +51,34 @@ struct PeopleView: View {
                     }
                     
                     else {
+                        if viewModel.selectedContactIDs.count >= 2{
+                            HStack{
+                                Text("Group Name:")
+                                TextField(
+                                    "Group Name",
+                                    text: $groupName,
+                                    prompt: Text("Enter Group Name Here")
+                                )
+                                
+                            }
+                            
+                            .padding()
+                            .background(Color.foreground.opacity(0.1))
+                            .padding(.top,1)
+                            Button("Create Group"){
+//                                print(viewModel.selectedContactIDs)
+                                Task{
+                                    do{
+                                        let chat = try await viewModel.createGroupChat(groupName: groupName, CurUserID: authViewModel.appUser!.uid)
+                                        router.navigate(to: .chat(chat: chat))
+                                    } catch {
+                                        print(error)
+                                    }
+                                }
+                                
+                            }
+                            .disabled(groupName.isEmpty)
+                        }
                         List(selection: $viewModel.selectedContactIDs) {
                             Section("Registered Users") {
                                 ForEach(viewModel.filteredContacts(type: 0), id: \.objectID) { contact in
@@ -80,23 +109,25 @@ struct PeopleView: View {
                                     )
                                 }
                             }
-
-                            Section("Not Registered Users") {
-                                ForEach(viewModel.filteredContacts(type: 1), id: \.objectID) { contact in
-                                    ContactRowView(
-                                        contact: contact,
-                                        onTap: {
-                                            tappedContact in
+                            if !isMultiSelectEnabled{
+                                Section("Not Registered Users") {
+                                    ForEach(viewModel.filteredContacts(type: 1), id: \.objectID) { contact in
+                                        ContactRowView(
+                                            contact: contact,
+                                            onTap: {
+                                                tappedContact in
+                                                    
+                                                    inviteContact = tappedContact
+                                                    showInviteDialog = true
                                                 
-                                                inviteContact = tappedContact
-                                                showInviteDialog = true
-                                            
-                                        },
-                                        isMultiSelectEnabled: $isMultiSelectEnabled,
-                                        selectedContactIDs: $viewModel.selectedContactIDs
-                                    )
+                                            },
+                                            isMultiSelectEnabled: $isMultiSelectEnabled,
+                                            selectedContactIDs: $viewModel.selectedContactIDs
+                                        )
+                                    }
                                 }
                             }
+                            
 
                         }
                         .environment(\.editMode, .constant(isMultiSelectEnabled ? .active : .inactive))

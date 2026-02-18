@@ -245,6 +245,39 @@ class ContactsViewModel: ObservableObject {
         
         return newChat
     }
+    func createGroupChat(
+        groupName: String,
+        CurUserID: String
+        
+    )  async throws -> Chat{
+        let chats = try await chatService.fetchChatsForUser(userID: CurUserID)
+        
+        var targetParticipants: [String] = PersistenceController.shared.fetchUserIDs(from: selectedContactIDs)
+        
+        targetParticipants.append(CurUserID)
+        
+        print(targetParticipants)
+        
+        if let existingChat = chats.first(where: { chat in
+            chat.participants.count == targetParticipants.count &&
+            Set(chat.participants) == Set(targetParticipants)
+        }) {
+            return existingChat
+        }
+
+        
+        let newChatID = try await chatService.createChat(
+            participants: targetParticipants,
+            isGroup: true,
+            name: groupName
+        )
+        
+        guard let newChat = try await chatService.fetchChat(by: newChatID) else {
+            throw NSError(domain: "Chat creation failed", code: 0)
+        }
+        
+        return newChat
+    }
 
 
 }
