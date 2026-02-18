@@ -15,7 +15,7 @@ struct ChatsView: View {
             storiesSection
 
             List(viewModel.chats) { chat in
-                ChatRowView(chat: chat)
+                ChatRowView(chat: chat, CurUserId: authViewModel.appUser!.uid)
                     .onTapGesture {
                         appRouter.navigate(to: .chat(chat: chat))
                     }
