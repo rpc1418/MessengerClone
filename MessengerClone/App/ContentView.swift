@@ -41,6 +41,24 @@ struct ContentView: View {
                         ProfileView()
                     case .chat(let chat):
                         ChatView(chat: chat, currentUserID: authViewModel.appUser!.uid)
+                    case .activestatusview:
+                        ActiveStatusView()
+                    case .datasaverview:
+                        DataSaverView()
+                    case .helpcenterview:
+                        HelpCenterView()
+                    case .notificationssettingsview:
+                        NotificationsSettingsView()
+                    case .privacysafetyview:
+                        PrivacySafetyView()
+                    case .phonesettingsview:
+                        PhoneSettingsView()
+                    case .reportproblemview:
+                        ReportProblemView()
+                    case .storysettingsview:
+                        StorySettingsView()
+                    case .usernamesettingsview:
+                        UsernameSettingsView()
                     }
                 }
         }
