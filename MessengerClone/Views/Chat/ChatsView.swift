@@ -4,17 +4,21 @@ import FirebaseFirestore
 struct ChatsView: View {
 
     @EnvironmentObject var authViewModel: AuthViewModel
-    @StateObject private var viewModel = ChatsViewModel()
     @EnvironmentObject var appRouter: AppRouter
+    @StateObject private var viewModel = ChatsViewModel()
 
     var body: some View {
         VStack(spacing: 0) {
 
             searchBar
-            
-            storiesSection
 
-            List(viewModel.chats) { chat in
+            //Stories only visible when NOT searching
+            if viewModel.searchText.isEmpty {
+                storiesSection
+                    .transition(.move(edge: .top).combined(with: .opacity))
+            }
+
+            List(viewModel.filteredChats) { chat in
                 ChatRowView(chat: chat)
                     .onTapGesture {
                         appRouter.navigate(to: .chat(chat: chat))
@@ -23,6 +27,8 @@ struct ChatsView: View {
             .listStyle(.plain)
             .scrollContentBackground(.hidden)
         }
+        .animation(.easeInOut(duration: 0.25), value: viewModel.searchText)
+
         .onAppear {
             guard let user = authViewModel.appUser else { return }
             viewModel.startListeningToChats(userID: user.uid)
@@ -33,20 +39,30 @@ struct ChatsView: View {
     }
 }
 
+
+
 private extension ChatsView {
 
     var searchBar: some View {
         HStack(spacing: 8) {
+
             Image(systemName: "magnifyingglass")
                 .foregroundColor(.gray)
 
-            Text("Search")
-                .foregroundColor(.gray)
+            TextField("Search", text: $viewModel.searchText)
+                .textFieldStyle(.plain)
 
-            Spacer()
+            if !viewModel.searchText.isEmpty {
+                Button {
+                    viewModel.searchText = ""
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(.gray)
+                }
+            }
         }
         .padding(.horizontal, 12)
-        .frame(height: 36) // 🔥 smaller height (Messenger uses smaller than 44)
+        .frame(height: 36)
         .background(
             RoundedRectangle(cornerRadius: 18)
                 .fill(Color(.systemGray5))
