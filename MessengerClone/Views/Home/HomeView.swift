@@ -18,7 +18,7 @@ struct HomeView: View {
             // DYNAMIC CONTENT
             currentScreen
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color(.systemGroupedBackground))
+                .background(Color(.systemBackground))
         }
         .navigationBarHidden(true)
         .safeAreaInset(edge: .bottom) {

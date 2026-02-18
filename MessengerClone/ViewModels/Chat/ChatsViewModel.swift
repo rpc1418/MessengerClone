@@ -1,6 +1,5 @@
 import SwiftUI
 import Combine
-import FirebaseFirestore
 
 @MainActor
 final class ChatsViewModel: ObservableObject {
@@ -17,20 +16,16 @@ final class ChatsViewModel: ObservableObject {
     }
 
     func startListening(userID: String) {
-        print("🔥 Starting listener for userID:", userID)
-
         isLoading = true
         listenTask?.cancel()
 
         listenTask = Task {
             do {
                 for try await chats in chatService.listenToUserChats(userID: userID) {
-                    print("🔥 Received chats count:", chats.count)
                     self.chats = chats
                     self.isLoading = false
                 }
             } catch {
-                print("❌ Listener error:", error)
                 self.errorMessage = error.localizedDescription
                 self.isLoading = false
             }

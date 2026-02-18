@@ -3,24 +3,34 @@ import FirebaseFirestore
 
 struct ChatsView: View {
 
+    @StateObject private var viewModel = ChatsViewModel()
+
     var body: some View {
         VStack(spacing: 0) {
 
             searchBar
-
+            
             storiesSection
 
-            Divider()
-
-            chatList
+            List(viewModel.chats) { chat in
+                ChatRowView(chat: chat)
+            }
+            .listStyle(.plain)
+            .scrollContentBackground(.hidden)
         }
-        .background(Color(.systemBackground))
+        .onAppear {
+            viewModel.startListening(userID: "uid1")
+        }
+        .onDisappear {
+            viewModel.stopListening()
+        }
     }
 }
+
 private extension ChatsView {
 
     var searchBar: some View {
-        HStack {
+        HStack(spacing: 8) {
             Image(systemName: "magnifyingglass")
                 .foregroundColor(.gray)
 
@@ -29,13 +39,19 @@ private extension ChatsView {
 
             Spacer()
         }
-        .padding(12)
-        .background(Color(.systemGray6))
-        .cornerRadius(16)
-        .padding(.horizontal)
+        .padding(.horizontal, 12)
+        .frame(height: 36) // 🔥 smaller height (Messenger uses smaller than 44)
+        .background(
+            RoundedRectangle(cornerRadius: 18)
+                .fill(Color(.systemGray5))
+        )
+        .padding(.horizontal, 16)
         .padding(.top, 8)
+        .padding(.bottom, 6)
     }
 }
+
+
 private extension ChatsView {
 
     var storiesSection: some View {
@@ -92,41 +108,49 @@ private extension ChatsView {
         }
     }
 }
-private extension ChatsView {
-
-    var chatList: some View {
-        List(dummyChats) { chat in
-            ChatRowView(chat: chat)
-        }
-        .listStyle(.plain)
-    }
-
-    var dummyChats: [Chat] {
-        [
-            Chat(
-                id: "1",
-                participants: [],
-                isGroup: false,
-                name: "Martin Randolph",
-                lastMessage: "You: What's man!",
-                lastUpdated: Timestamp(date: Date())
-            ),
-            Chat(
-                id: "2",
-                participants: [],
-                isGroup: false,
-                name: "Andrew Parker",
-                lastMessage: "You: Ok, thanks!",
-                lastUpdated: Timestamp(date: Date().addingTimeInterval(-1800))
-            ),
-            Chat(
-                id: "3",
-                participants: [],
-                isGroup: false,
-                name: "Karen Castillo",
-                lastMessage: "You: Ok, See you in Tokyo",
-                lastUpdated: Timestamp(date: Date().addingTimeInterval(-3600))
-            )
-        ]
-    }
-}
+//private extension ChatsView {
+//
+//    var chatList: some View {
+//        List(dummyChats) { chat in
+//            ChatRowView(chat: chat)
+//        }
+//        .listStyle(.plain)
+//    }
+//
+//    var dummyChats: [Chat] {
+//        [
+//            Chat(
+//                id: "1",
+//                participants: [],
+//                isGroup: false,
+//                name: "Martin Randolph",
+//                lastMessage: "You: What's man!",
+//                lastUpdated: Timestamp(date: Date())
+//            ),
+//            Chat(
+//                id: "2",
+//                participants: [],
+//                isGroup: false,
+//                name: "Andrew Parker",
+//                lastMessage: "You: Ok, thanks!",
+//                lastUpdated: Timestamp(date: Date().addingTimeInterval(-1800))
+//            ),
+//            Chat(
+//                id: "3",
+//                participants: [],
+//                isGroup: false,
+//                name: "Karen Castillo",
+//                lastMessage: "You: Ok, See you in Tokyo",
+//                lastUpdated: Timestamp(date: Date().addingTimeInterval(-3600))
+//            ),
+//            Chat(
+//                id: "4",
+//                participants: [],
+//                isGroup: false,
+//                name: "Karen Castillo",
+//                lastMessage: "You: Ok, See you in Tokyo",
+//                lastUpdated: Timestamp(date: Date().addingTimeInterval(-3600))
+//            )
+//        ]
+//    }
+//}
