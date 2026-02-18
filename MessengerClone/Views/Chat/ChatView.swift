@@ -16,7 +16,8 @@ struct ChatView: View {
     let currentUserID: String
     @StateObject var chatViewModel: ChatViewModel
     @State private var newMessage: String = ""
-    
+    @EnvironmentObject var router: AppRouter
+    @EnvironmentObject var authViewModel: AuthViewModel
     let chatService = ChatService()
     
     
@@ -25,7 +26,8 @@ struct ChatView: View {
     private var canSend: Bool {
         !newMessage.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
-
+     
+    @State var showAlert: Bool = false
     
     init(chat: Chat, currentUserID: String) {
             self.chat = chat
@@ -42,6 +44,38 @@ struct ChatView: View {
     var body: some View {
         if(!chatViewModel.isLoading){
             VStack {
+                
+                    
+                    
+                    HStack {
+                        Image(systemName: "chevron.left")
+                            .padding()
+                        .onTapGesture {
+                            router.goBack()
+                        }
+                        Text(chatViewModel.chatName)
+                        
+                        Spacer()
+                        
+                        HStack(spacing: 16) {
+                            Image(systemName: "phone.fill")
+                                .onTapGesture {
+                                    
+                                        showAlert = true
+                                    
+                                }
+                            
+                            Image(systemName: "video.fill")
+                                .onTapGesture {
+                                    
+                                        showAlert = true
+                                    
+                                }
+                        }
+                    }
+                
+                
+
                 ScrollViewReader { scrollView in
                     ScrollView {
                         VStack(spacing: 8) {
@@ -62,8 +96,10 @@ struct ChatView: View {
                                     message: message,
                                     showName: showName,
                                     isCurrentUser: isCurrentUser,
-                                    senderName: chatViewModel.getName(userId: message.senderID)
-                                )
+                                    senderName: chatViewModel.getName(userId: message.senderID),
+                                    participants: chat.participants
+                                ).environmentObject(chatViewModel)
+                                
                             }
 
 
@@ -76,6 +112,7 @@ struct ChatView: View {
                                 scrollView.scrollTo(last.id, anchor: .bottom)
                             }
                         }
+                        chatViewModel.markMessagesRead(allowed: authViewModel.readReceipts)
                     }
                 }
                 
@@ -142,13 +179,19 @@ struct ChatView: View {
                 }
                 .padding()
             }
-            .navigationTitle(chatViewModel.chatName)
+            .navigationBarBackButtonHidden()
             .onAppear {
                 chatViewModel.startListeningToMsgs()
             }
+            
             .onDisappear {
                 chatViewModel.stopListening()
             }
+            .alert("Call not Supported", isPresented: $showAlert) {
+                Button("Cancel", role: .cancel) {showAlert.toggle() }
+                } message: {
+                    Text("This action cannot be done.")
+                }
         } else {
             VStack {
                 Text("Loading...")

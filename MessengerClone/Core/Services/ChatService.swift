@@ -177,5 +177,21 @@ final class ChatService {
             )
         }
     }
+    
+    func markMessageAsRead(chatID: String,
+                           messageID: String,
+                           userID: String) {
+        
+        
+        
+        db.collection("chats")
+            .document(chatID)
+            .collection("messages")
+            .document(messageID)
+            .updateData([
+                "readBy": FieldValue.arrayUnion([userID])
+            ])
+    }
+
 
 }
