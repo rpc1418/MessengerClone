@@ -117,6 +117,7 @@ struct ChatView: View {
                                 Task{
                                     do{
                                        try await chatService.sendMessage(chatID: chat.id, senderID: currentUserID, text: newMessage)
+                                        newMessage = ""
                                     }
                                     catch{
                                         print("error sending message:" ,error.localizedDescription)
