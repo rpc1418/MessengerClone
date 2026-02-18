@@ -74,6 +74,16 @@ final class PersistenceController {
         return nil
     }
     
+    func deleteContact(_ contact: RegisteredContact) {
+        regContactListContainer.viewContext.delete(contact)
+
+        do {
+            try regContactListContainer.viewContext.save()
+        } catch {
+            print("Failed to delete contact:", error)
+        }
+    }
+    
 
     
 }

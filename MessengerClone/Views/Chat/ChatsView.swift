@@ -23,10 +23,11 @@ struct ChatsView: View {
             .listStyle(.plain)
             .scrollContentBackground(.hidden)
         }
-        .onAppear {
+        .task(id: authViewModel.appUser?.uid) {
             guard let user = authViewModel.appUser else { return }
             viewModel.startListeningToChats(userID: user.uid)
         }
+
         .onDisappear {
             viewModel.stopListening()
         }

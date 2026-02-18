@@ -59,15 +59,25 @@ class ContactsViewModel: ObservableObject {
         private func syncContacts() async {
             do {
                 let deviceNumbers = try fetchDistinctPhoneNumbers()
-                let normalizedNumbers = deviceNumbers.map { normalizePhone($0) }
-
+                let normalizedNumbers = Set(deviceNumbers.map { normalizePhone($0) })
+         
                 let existingContacts = persistence.fetchContactsDetails()
                 let existingNumbersSet = Set(existingContacts.compactMap { $0.idPhNo })
-
+         
+                
+                let contactsToDelete = existingContacts.filter {
+                    guard let number = $0.idPhNo else { return false }
+                    return !normalizedNumbers.contains(number)
+                }
+         
+                for contact in contactsToDelete {
+                    persistence.deleteContact(contact)
+                }
+         
                 for number in normalizedNumbers where !existingNumbersSet.contains(number) {
                     do {
                         let user = try await FirestoreService.shared.fetchUserData(phoneNumber: number)
-                        PersistenceController.shared.createRegCon(appUser: user, isReg: true)
+                        persistence.createRegCon(appUser: user, isReg: true)
                     } catch {
                         let dummyUser = AppUser(
                             id: "",
@@ -79,18 +89,17 @@ class ContactsViewModel: ObservableObject {
                             profileURL: "",
                             createdAt: Timestamp()
                         )
-                        PersistenceController.shared.createRegCon(appUser: dummyUser, isReg: false)
+                        persistence.createRegCon(appUser: dummyUser, isReg: false)
                     }
                 }
-
-                
+         
                 let updatedContacts = persistence.fetchContactsDetails()
-
+         
                 await MainActor.run {
                     self.contacts = updatedContacts
                     self.isLoading = false
                 }
-
+         
             } catch {
                 await MainActor.run {
                     self.msgFromViewModel = "Failed to sync contacts"
