@@ -226,7 +226,8 @@ class ContactsViewModel: ObservableObject {
         
         let newChatID = try await chatService.createChat(
             participants: [currentUserID, otherUserID!],
-            isGroup: false
+            isGroup: false,
+            name: contact.firstName ?? "Unknown"
         )
         
         guard let newChat = try await chatService.fetchChat(by: newChatID) else {

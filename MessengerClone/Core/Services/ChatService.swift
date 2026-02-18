@@ -23,12 +23,11 @@ final class ChatService {
                 "lastUpdated": Timestamp(date: Date()),
                 "lastRead": Dictionary(
                     uniqueKeysWithValues: participants.map { ($0, Timestamp(date: Date())) }
-                )
+                ),
+                "name": name ?? ""
             ]
             
-            if isGroup, let name = name {
-                chatData["name"] = name
-            }
+            
             
             let chatRef = db.collection("chats").document()
             try await chatRef.setData(chatData)
