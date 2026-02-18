@@ -11,15 +11,11 @@ struct ChatsView: View {
         VStack(spacing: 0) {
 
             searchBar
+            
+            storiesSection
 
-            //Stories only visible when NOT searching
-            if viewModel.searchText.isEmpty {
-                storiesSection
-                    .transition(.move(edge: .top).combined(with: .opacity))
-            }
-
-            List(viewModel.filteredChats) { chat in
-                ChatRowView(chat: chat)
+            List(viewModel.chats) { chat in
+                ChatRowView(chat: chat, CurUserId: authViewModel.appUser!.uid)
                     .onTapGesture {
                         appRouter.navigate(to: .chat(chat: chat))
                     }
@@ -27,12 +23,11 @@ struct ChatsView: View {
             .listStyle(.plain)
             .scrollContentBackground(.hidden)
         }
-        .animation(.easeInOut(duration: 0.25), value: viewModel.searchText)
-
-        .onAppear {
+        .task(id: authViewModel.appUser?.uid) {
             guard let user = authViewModel.appUser else { return }
             viewModel.startListeningToChats(userID: user.uid)
         }
+
         .onDisappear {
             viewModel.stopListening()
         }
