@@ -12,12 +12,14 @@ struct MessengerCloneApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @StateObject var router: AppRouter = AppRouter()
     @StateObject private var authViewModel = AuthViewModel()
+    @StateObject private var contactsViewModel = ContactsViewModel()
     @Environment(\.scenePhase) var scenePhase
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environmentObject(router)
                 .environmentObject(authViewModel)
+                .environmentObject(contactsViewModel)
         }
         .onChange(of: scenePhase) { phase in
             switch phase {

@@ -158,4 +158,25 @@ final class ChatService {
                 lastUpdated: data["lastUpdated"] as? Timestamp ?? Timestamp()
             )
         }
+    
+    func fetchChatsForUser(userID: String) async throws -> [Chat] {
+        
+        let snapshot = try await db.collection("chats")
+            .whereField("participants", arrayContains: userID)
+            .getDocuments()
+        
+        return snapshot.documents.compactMap { doc in
+            let data = doc.data()
+            
+            return Chat(
+                id: doc.documentID,
+                participants: data["participants"] as? [String] ?? [],
+                isGroup: data["isGroup"] as? Bool ?? false,
+                name: data["name"] as? String,
+                lastMessage: data["lastMessage"] as? String ?? "",
+                lastUpdated: data["lastUpdated"] as? Timestamp ?? Timestamp()
+            )
+        }
+    }
+
 }
