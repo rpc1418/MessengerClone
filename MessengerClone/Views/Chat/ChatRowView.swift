@@ -10,6 +10,24 @@ import FirebaseFirestore
 struct ChatRowView: View {
     
     let chat: Chat
+    let CurUserId: String 
+
+    private var chatName: String {
+            if chat.isGroup {
+                return chat.name ?? "dummyname"
+            } else {
+                return chat.participants
+                    .filter { $0 != CurUserId }
+                    .map { if let user = PersistenceController.shared.fetUserById(id: $0)
+                        {return user.fullName}
+                        else {
+                        print($0)
+                        return "dummy"
+                    }
+                    }
+                    .joined(separator: "")
+            }
+        }
     
     var body: some View {
         HStack(spacing: 12) {
@@ -20,7 +38,7 @@ struct ChatRowView: View {
             
             VStack(alignment: .leading, spacing: 3) {
                 
-                Text(chat.name ?? chat.participants.joined(separator: ", "))
+                Text(chat.isGroup ? chat.name! : chatName)
                     .font(.system(size: 16, weight: .semibold))
                 
                 Text("\(chat.lastMessage) · \(chat.lastUpdated.dateValue().messengerFormattedString())")

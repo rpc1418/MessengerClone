@@ -26,7 +26,18 @@ class ChatViewModel: ObservableObject {
     }
     
     func createGroupName() -> String{
-        return chat.name ?? "dummyname"
+        if(chat.isGroup){
+            return chat.name ?? "dummyname"
+        }else{
+            var name = ""
+            participants.forEach({ (user) in
+                if user.id != CurUserId{
+                    name.append(user.name)
+                }
+            })
+            return name
+        }
+        
     }
     
     func getName(userId: String) -> String{
