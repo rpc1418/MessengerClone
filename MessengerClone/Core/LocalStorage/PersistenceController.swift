@@ -38,13 +38,12 @@ final class PersistenceController {
     
     func createRegCon(appUser: AppUser, isReg: Bool){
         let regCon=RegisteredContact(context: regContactListContainer.viewContext)
-        regCon.databaseId=appUser.id
+        regCon.databaseId=appUser.uid
         regCon.firstName=appUser.firstName
         regCon.lastName=appUser.lastName
         regCon.idPhNo=appUser.phoneNumber
         regCon.isReg=isReg
         regCon.gender=""
-        
         saveContext()
     }
 

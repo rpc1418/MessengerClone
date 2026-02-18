@@ -10,8 +10,9 @@ import SwiftUI
 struct ContentView: View {
 
     @EnvironmentObject var router: AppRouter
+    @EnvironmentObject var authViewModel: AuthViewModel
     @State private var selectedTab: AppTab = .chats
-
+    
     var body: some View {
         NavigationStack(path: $router.path) {
             RootView()
@@ -39,7 +40,7 @@ struct ContentView: View {
                     case .profileView:
                         ProfileView()
                     case .chat(let chat):
-                        ChatView(chat: chat)
+                        ChatView(chat: chat, currentUserID: authViewModel.appUser!.uid)
                     }
                 }
         }

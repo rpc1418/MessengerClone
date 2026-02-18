@@ -4,7 +4,7 @@ struct HomeView: View {
 
     @EnvironmentObject var appRouter: AppRouter
     @State private var selectedTab: AppTab = .chats
-
+    @EnvironmentObject var authViewModel: AuthViewModel
     var body: some View {
 
         VStack(spacing: 0) {
@@ -36,6 +36,9 @@ private extension HomeView {
         switch selectedTab {
         case .chats:
             ChatsView()
+//            Button("Sign out"){
+//                authViewModel.signOut()
+//            }
 
         case .people:
             RegPeopleView()

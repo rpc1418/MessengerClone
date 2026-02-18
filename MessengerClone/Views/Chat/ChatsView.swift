@@ -5,6 +5,7 @@ struct ChatsView: View {
 
     @EnvironmentObject var authViewModel: AuthViewModel
     @StateObject private var viewModel = ChatsViewModel()
+    @EnvironmentObject var appRouter: AppRouter
 
     var body: some View {
         VStack(spacing: 0) {
@@ -15,6 +16,9 @@ struct ChatsView: View {
 
             List(viewModel.chats) { chat in
                 ChatRowView(chat: chat)
+                    .onTapGesture {
+                        appRouter.navigate(to: .chat(chat: chat))
+                    }
             }
             .listStyle(.plain)
             .scrollContentBackground(.hidden)
