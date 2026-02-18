@@ -17,6 +17,17 @@ enum Route: Hashable {
     case developerView
     case profileView
     case chat(chat: Chat)
+    case activestatusview
+    case datasaverview
+    case helpcenterview
+    case notificationssettingsview
+    case privacysafetyview
+    case phonesettingsview
+    case reportproblemview
+    case storysettingsview
+    case usernamesettingsview
+    
+    
 }
 
 
