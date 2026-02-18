@@ -3,6 +3,7 @@ import FirebaseFirestore
 
 struct ChatsView: View {
 
+    @EnvironmentObject var authViewModel: AuthViewModel
     @StateObject private var viewModel = ChatsViewModel()
 
     var body: some View {
@@ -19,7 +20,8 @@ struct ChatsView: View {
             .scrollContentBackground(.hidden)
         }
         .onAppear {
-            viewModel.startListening(userID: "uid1")
+            guard let user = authViewModel.appUser else { return }
+            viewModel.startListeningToChats(userID: user.uid)
         }
         .onDisappear {
             viewModel.stopListening()

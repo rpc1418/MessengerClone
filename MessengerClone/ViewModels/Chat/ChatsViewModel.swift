@@ -15,7 +15,7 @@ final class ChatsViewModel: ObservableObject {
         self.chatService = chatService
     }
 
-    func startListening(userID: String) {
+    func startListeningToChats(userID: String) {
         isLoading = true
         listenTask?.cancel()
 
