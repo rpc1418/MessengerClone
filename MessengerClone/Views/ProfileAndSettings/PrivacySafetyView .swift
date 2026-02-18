@@ -9,12 +9,12 @@ import SwiftUI
 
 struct PrivacySafetyView: View {
     @State private var blockedUsers = false
-    @State private var readReceipts = true
+    @EnvironmentObject var authViewModel: AuthViewModel
 
     var body: some View {
         Form {
             Section(header: Text("MESSAGES")) {
-                Toggle("Send read receipts", isOn: $readReceipts)
+                Toggle("Send read receipts", isOn: $authViewModel.readReceipts)
                 NavigationLink("Blocked people") {
                     Text("Blocked users list here")
                         .navigationTitle("Blocked")
@@ -34,8 +34,3 @@ struct PrivacySafetyView: View {
     }
 }
 
-#Preview {
-    NavigationStack {
-        PrivacySafetyView()
-    }
-}

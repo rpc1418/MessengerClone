@@ -12,7 +12,9 @@ struct MessageRowView: View {
     let showName: Bool
     let isCurrentUser: Bool
     let senderName: String
-
+    let participants: [String]
+    @State var showReadByMemebers: Bool = false
+    @EnvironmentObject var chatViewModel: ChatViewModel
     var body: some View {
         HStack{
             if(isCurrentUser){
@@ -24,7 +26,6 @@ struct MessageRowView: View {
                 HStack(alignment: .bottom, spacing: 8) {
                     
                     if !isCurrentUser , showName {
-                        // Replace with your avatar image logic or placeholder
                         Image(systemName: "person.circle.fill")
                             .resizable()
                             .frame(width: 28, height: 28)
@@ -38,7 +39,6 @@ struct MessageRowView: View {
                         Text(message.text)
                             .padding(10)
                             .background(isCurrentUser ? Color.blue.opacity(0.7) : Color.gray.opacity(0.2))
-                            .foregroundColor(isCurrentUser ? .white : .black)
                             .cornerRadius(16)
                         HStack{
                             Text(message.timestampFormatted)
@@ -46,16 +46,43 @@ struct MessageRowView: View {
                                 .foregroundColor(.gray)
                                 .padding(isCurrentUser ? .trailing : .leading, 6)
                             if showName {
-                                Text(senderName)
-                                    .font(.caption2)
-                                    .foregroundColor(.gray)
-                                    .padding(isCurrentUser ? .trailing : .leading, 6)
+                                    Text(senderName)
+                                        .font(.caption2)
+                                        .foregroundColor(.gray)
+                                        .padding(isCurrentUser ? .trailing : .leading, 6)
+                            } else{
+                                if showReadByMemebers{
+                                        Text("ReadBy:")
+                                            .font(.caption2)
+                                            .foregroundColor(.gray)
+                                            .padding(isCurrentUser ? .trailing : .leading, 6)
+                                }
                             }
+                        }
+                        if  showReadByMemebers {
+                            VStack(alignment: .leading, spacing: 4) {
+                                let readId: [String] = message.readBy.filter { $0 != chatViewModel.CurUserId }
+                                ForEach(readId, id: \.self) { userId in
+                                    let name = chatViewModel.participants.first(where: { $0.id == userId })?.name ?? "Unknown"
+                                    Text(name)
+                                        .font(.caption2)
+                                        .foregroundColor(.gray)
+                                        .padding(isCurrentUser ? .trailing : .leading, 6)
+                                }
+                            }
+                            
                         }
 
                         
                     }
-                    
+                    if isCurrentUser {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.caption)
+                            .foregroundStyle( Set(message.readBy) == Set(participants) ? Color.blue : Color.gray)
+                            .onTapGesture {
+                                showReadByMemebers.toggle()
+                            }
+                    }
                 }
             }
             .id(message.id)
