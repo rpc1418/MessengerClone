@@ -12,7 +12,7 @@ final class AuthViewModel: ObservableObject {
 
     @Published var currentUser: User?
     @Published var userExists: Bool? = nil   // nil = checking Firestore
-    
+    @Published var readReceipts: Bool = true
     @Published var appUser: AppUser?
 
     private var authListener: AuthStateDidChangeListenerHandle?

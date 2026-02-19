@@ -84,6 +84,27 @@ final class PersistenceController {
         }
     }
     
+    func fetchUserIDs(from objectIDs: Set<NSManagedObjectID>) -> [String] {
+        
+        
+        var userIDs: [String] = []
+        
+        regContactListContainer.viewContext.performAndWait {
+            for objectID in objectIDs {
+                do {
+                    if let contact = try regContactListContainer.viewContext.existingObject(with: objectID) as? RegisteredContact,
+                       let userID = contact.databaseId {
+                        userIDs.append(userID)
+                    }
+                } catch {
+                    print("Failed to fetch object for ID: \(objectID), error: \(error)")
+                }
+            }
+        }
+        
+        return userIDs
+    }
+
 
     
 }

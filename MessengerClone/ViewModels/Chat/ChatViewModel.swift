@@ -5,13 +5,17 @@
 //  Created by rentamac on 2/17/26.
 //
 
-import Foundation
+import Contacts
 import Combine
+import FirebaseFirestore
+import CoreData
 
 class ChatViewModel: ObservableObject {
     let chat: Chat
     let CurUserId: String
     @Published var messages: [Message] = []
+    private var processedMessageIDs: Set<String> = []
+
     @Published var participants: [chatuser] = []
     private let chatService = ChatService()
     private var messageStreamTask: Task<Void, Never>?
@@ -49,8 +53,10 @@ class ChatViewModel: ObservableObject {
             if participant != CurUserId {
                 if let regParticipant = PersistenceController.shared.fetUserById(id: participant){
                     participants.append(chatuser(id: regParticipant.databaseId ?? participant, name: regParticipant.firstName ?? "UnknownFromData"))
+                    
                 } else {
                     participants.append(chatuser(id: participant, name: "Unknown"))
+                    
                 }
                 
             }
@@ -76,6 +82,39 @@ class ChatViewModel: ObservableObject {
         messageStreamTask?.cancel()
         messageStreamTask = nil
     }
+    
+    func markMessagesRead(allowed: Bool) {
+        
+       
+        
+        for message in messages {
+            
+            // Skip if already processed
+            if processedMessageIDs.contains(message.id) { continue }
+            
+            // Skip your own messages
+            if message.senderID == CurUserId { continue }
+            
+            // If not already read
+            if !message.readBy.contains(CurUserId) {
+                if allowed{
+                    chatService.markMessageAsRead(
+                        chatID: chat.id,
+                        messageID: message.id,
+                        userID: CurUserId
+                    )
+                }
+                
+            }
+            
+            // Mark as processed so we don't check again
+            processedMessageIDs.insert(message.id)
+        }
+    }
+
+    
+    
+
 }
 
 struct chatuser{
