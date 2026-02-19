@@ -13,6 +13,7 @@ struct MessengerCloneApp: App {
     @StateObject var router: AppRouter = AppRouter()
     @StateObject private var authViewModel = AuthViewModel()
     @StateObject private var contactsViewModel = ContactsViewModel()
+    @StateObject private var themeManager = ThemeManager()
     @Environment(\.scenePhase) var scenePhase
     var body: some Scene {
         WindowGroup {
@@ -20,6 +21,8 @@ struct MessengerCloneApp: App {
                 .environmentObject(router)
                 .environmentObject(authViewModel)
                 .environmentObject(contactsViewModel)
+                .environmentObject(themeManager)   // INJECT
+                .preferredColorScheme(themeManager.colorScheme) //  APPLY
         }
         .onChange(of: scenePhase) { phase in
             switch phase {

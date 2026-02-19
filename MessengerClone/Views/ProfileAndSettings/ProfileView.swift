@@ -14,6 +14,7 @@ struct ProfileView: View {
     @StateObject private var viewModel = SettingsViewModel()
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var router: AppRouter
+    @EnvironmentObject var themeManager: ThemeManager
 
     var body: some View {
         List {
@@ -51,21 +52,21 @@ struct ProfileView: View {
                 ZStack {
                     Circle()
                         .strokeBorder(Color.blue.opacity(0.3), lineWidth: 6)
-                        .frame(width: 190, height: 190)
+                        .frame(width: 168, height: 167)
 
                     Circle()
                         .fill(Color.blue.opacity(0.05))
-                        .frame(width: 150, height: 150)
+                        .frame(width: 115, height: 115)
 
                     profileImage
                         .resizable()
                         .scaledToFill()
-                        .frame(width: 96, height: 96)
+                        .frame(width: 115, height: 115)
                         .clipShape(Circle())
                 }
 
                 Text(viewModel.displayName.isEmpty ? "User" : viewModel.displayName)
-                    .font(.system(size: 20, weight: .semibold))
+                    .font(.system(size: 24, weight: .semibold))
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 24)
@@ -81,7 +82,7 @@ struct ProfileView: View {
                 iconColor: Color.black,
                 title: "Dark Mode",
                 subtitle: nil,
-                accessory: .toggle($viewModel.isDarkMode)
+                accessory: .toggle($themeManager.isDarkMode)
             )
 
             // Active Status -> placeholder navigation

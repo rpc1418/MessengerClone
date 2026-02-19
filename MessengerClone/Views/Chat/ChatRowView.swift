@@ -32,9 +32,15 @@ struct ChatRowView: View {
     var body: some View {
         HStack(spacing: 12) {
             
-            Circle()
-                .fill(Color.gray.opacity(0.3))
-                .frame(width: 52, height: 52)
+            ZStack{
+                // Avatar
+                Circle()
+                    .fill(Color(.systemGray5))
+                    .frame(width: 52, height: 52)
+                Image(systemName: "person.fill")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(.primary)
+            }
             
             VStack(alignment: .leading, spacing: 3) {
                 
