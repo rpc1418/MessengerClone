@@ -6,23 +6,33 @@ struct ChatsView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var appRouter: AppRouter
     @StateObject private var viewModel = ChatsViewModel()
+    @EnvironmentObject var contactViewModel: ContactsViewModel
 
     var body: some View {
         VStack(spacing: 0) {
 
             searchBar
-            
-            storiesSection
 
-            List(viewModel.chats) { chat in
-                ChatRowView(chat: chat, CurUserId: authViewModel.appUser!.uid)
-                    .onTapGesture {
-                        appRouter.navigate(to: .chat(chat: chat))
-                    }
+            //Hide stories while searching
+            if viewModel.searchText.isEmpty {
+                storiesSection
+                    .transition(.move(edge: .top).combined(with: .opacity))
+            }
+
+            List(viewModel.filteredChats) { chat in
+                if let currentUserID = authViewModel.appUser?.uid {
+                    ChatRowView(chat: chat, CurUserId: currentUserID)
+                        .onTapGesture {
+                            appRouter.navigate(to: .chat(chat: chat))
+                        }
+                }
             }
             .listStyle(.plain)
             .scrollContentBackground(.hidden)
         }
+        .animation(.easeInOut(duration: 0.25), value: viewModel.searchText)
+
+        // 🔥 Modern lifecycle listener
         .task(id: authViewModel.appUser?.uid) {
             guard let user = authViewModel.appUser else { return }
             viewModel.startListeningToChats(userID: user.uid)
@@ -33,7 +43,6 @@ struct ChatsView: View {
         }
     }
 }
-
 
 
 private extension ChatsView {
@@ -59,7 +68,7 @@ private extension ChatsView {
         .padding(.horizontal, 12)
         .frame(height: 36)
         .background(
-            RoundedRectangle(cornerRadius: 18)
+            RoundedRectangle(cornerRadius: 10)
                 .fill(Color(.systemGray5))
         )
         .padding(.horizontal, 16)
@@ -68,106 +77,70 @@ private extension ChatsView {
     }
 }
 
-
 private extension ChatsView {
-
+    
+    
     var storiesSection: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 16) {
-
+            HStack(spacing: 18) {
+                
                 storyItem(name: "Your story", isAdd: true)
-
-                storyItem(name: "Joshua", isOnline: true)
-                storyItem(name: "Martin", isOnline: true)
-                storyItem(name: "Karen", isOnline: true)
-                storyItem(name: "Martha")
+                ForEach(contactViewModel.filteredContacts(type: 0 ),id: \.objectID){
+                    contact in storyItem(name: contact.fullName ,isAdd: false)
+                }
             }
-            .padding(.horizontal)
-            .padding(.vertical, 10)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
         }
     }
-
-    func storyItem(name: String,
-                   isAdd: Bool = false,
-                   isOnline: Bool = false) -> some View {
-
+    
+    
+    func storyItem(
+        name: String,
+        isAdd: Bool = false,
+        isOnline: Bool = false
+    ) -> some View {
+        
         VStack(spacing: 6) {
-
+            
             ZStack(alignment: .bottomTrailing) {
-
-                Circle()
-                    .fill(Color.gray.opacity(0.3))
-                    .frame(width: 64, height: 64)
-
-                if isAdd {
+                ZStack{
+                    // Avatar
                     Circle()
-                        .fill(Color.black)
-                        .frame(width: 28, height: 28)
-                        .overlay(
-                            Image(systemName: "plus")
-                                .foregroundColor(.white)
-                        )
+                        .fill(Color(.systemGray5))
+                        .frame(width: 52, height: 52)
+                    Image(systemName: "person.fill")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(.primary)
                 }
-
+                
+                // Add Story
+                if isAdd {
+                    Image(systemName: "plus")
+                        .font(.system(size: 20.5, weight: .bold))
+                        .offset(x: -15, y: -15)
+                }
+                
+                
+                // Online indicator
                 if isOnline {
                     Circle()
                         .fill(Color.green)
-                        .frame(width: 14, height: 14)
+                        .frame(width: 12, height: 12)
                         .overlay(
-                            Circle().stroke(Color.white, lineWidth: 2)
+                            Circle()
+                                .stroke(Color.white, lineWidth: 2.5)
                         )
+                        .offset(x: -3.5, y: -3.5)
                 }
             }
-
+            
             Text(name)
-                .font(.system(size: 12))
+                .font(.system(size: 13))
+                .foregroundColor(.primary)
                 .lineLimit(1)
+                .frame(width: 62)
+                .multilineTextAlignment(.center)
         }
     }
 }
-//private extension ChatsView {
-//
-//    var chatList: some View {
-//        List(dummyChats) { chat in
-//            ChatRowView(chat: chat)
-//        }
-//        .listStyle(.plain)
-//    }
-//
-//    var dummyChats: [Chat] {
-//        [
-//            Chat(
-//                id: "1",
-//                participants: [],
-//                isGroup: false,
-//                name: "Martin Randolph",
-//                lastMessage: "You: What's man!",
-//                lastUpdated: Timestamp(date: Date())
-//            ),
-//            Chat(
-//                id: "2",
-//                participants: [],
-//                isGroup: false,
-//                name: "Andrew Parker",
-//                lastMessage: "You: Ok, thanks!",
-//                lastUpdated: Timestamp(date: Date().addingTimeInterval(-1800))
-//            ),
-//            Chat(
-//                id: "3",
-//                participants: [],
-//                isGroup: false,
-//                name: "Karen Castillo",
-//                lastMessage: "You: Ok, See you in Tokyo",
-//                lastUpdated: Timestamp(date: Date().addingTimeInterval(-3600))
-//            ),
-//            Chat(
-//                id: "4",
-//                participants: [],
-//                isGroup: false,
-//                name: "Karen Castillo",
-//                lastMessage: "You: Ok, See you in Tokyo",
-//                lastUpdated: Timestamp(date: Date().addingTimeInterval(-3600))
-//            )
-//        ]
-//    }
-//}

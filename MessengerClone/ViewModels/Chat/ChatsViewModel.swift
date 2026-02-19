@@ -16,7 +16,7 @@ final class ChatsViewModel: ObservableObject {
         self.chatService = chatService
     }
 
-    // 🔥 Filtered Chats
+    // Filtered Chats
     var filteredChats: [Chat] {
         if searchText.isEmpty {
             return chats
@@ -35,7 +35,7 @@ final class ChatsViewModel: ObservableObject {
         }
     }
 
-    // 🔥 Firestore Listener
+    // Firestore Listener
     func startListeningToChats(userID: String) {
         isLoading = true
         listenTask?.cancel()
