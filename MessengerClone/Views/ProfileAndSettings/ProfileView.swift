@@ -25,8 +25,7 @@ struct ProfileView: View {
         }
         .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
-        .background(Color.white)
-        .navigationTitle("")
+        .navigationTitle("Profile And Settings")
         .navigationBarTitleDisplayMode(.inline)
 //        .toolbar {
 //            ToolbarItem(placement: .topBarTrailing) {
