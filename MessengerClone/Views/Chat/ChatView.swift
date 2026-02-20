@@ -117,64 +117,109 @@ struct ChatView: View {
                 }
                 
                 HStack {
-                    VStack(spacing: 0) {
+                     VStack(spacing: 0) {
+                        
                         Divider()
                         
-                        HStack(alignment: .bottom, spacing: 8) {
+                        HStack(alignment: .bottom, spacing: 10) {
                             
-                           
-                            Button {
-                                isInputFocused = true
-                            } label: {
-                                Image(systemName: "face.smiling")
-                                    .font(.system(size: 22))
-                                    .foregroundColor(.gray)
+                            
+                            if newMessage.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty{
+                                HStack(spacing: 16) {
+                                    
+                                    Button {
+                                       
+                                    } label: {
+                                        Image(systemName: "plus.circle.fill")
+                                            .font(.system(size: 22))
+                                            .foregroundColor(.blue)
+                                    }
+                                    
+                                    Button {
+                                       
+                                    } label: {
+                                        Image(systemName: "camera.fill")
+                                            .font(.system(size: 20))
+                                            .foregroundColor(.blue)
+                                    }
+                                    
+                                    Button {
+                                        
+                                    } label: {
+                                        Image(systemName: "photo.fill")
+                                            .font(.system(size: 20))
+                                            .foregroundColor(.blue)
+                                    }
+                                    
+                                    Button {
+                                       
+                                    } label: {
+                                        Image(systemName: "mic.fill")
+                                            .font(.system(size: 20))
+                                            .foregroundColor(.blue)
+                                    }
+                                }
                             }
                             
+                          
+                            TextField("Aa", text: $newMessage, axis: .vertical)
+                                .focused($isInputFocused)
+                                .lineLimit(1...3)
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 8)
+                                .background(Color(.systemGray6))
+//                                .clipShape(Capsule())
                             
-                            ZStack(alignment: .leading) {
-                                if newMessage.isEmpty {
-                                    Text("Type a message...")
-                                        .foregroundColor(.gray)
-                                        .padding(.horizontal, 12)
-                                        .padding(.vertical, 8)
+                            
+                            if newMessage.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                                
+                                Button {
+                                    Task {
+                                        do {
+                                            try await chatService.sendMessage(
+                                                chatID: chat.id,
+                                                senderID: currentUserID,
+                                                text: "👍"   
+                                            )
+                                            newMessage = ""
+                                        } catch {
+                                            print("Error sending message:", error.localizedDescription)
+                                        }
+                                    }
+                                } label: {
+                                    Image(systemName: "hand.thumbsup.fill")
+                                        .font(.system(size: 22))
+                                        .foregroundColor(.blue)
                                 }
                                 
-                                TextEditor(text: $newMessage)
-                                    .focused($isInputFocused)
-                                    .frame(height: 28)
-                                    .padding(4)
-                                    .background(Color.clear)
-                            }
-                            .background(Color(.systemGray6))
-                            .clipShape(RoundedRectangle(cornerRadius: 20))
-                            
-                            
-                            Button {
-                                Task{
-                                    do{
-                                       try await chatService.sendMessage(chatID: chat.id, senderID: currentUserID, text: newMessage)
-                                        newMessage = ""
+                            } else {
+                                
+                                Button {
+                                    Task {
+                                        do {
+                                            try await chatService.sendMessage(
+                                                chatID: chat.id,
+                                                senderID: currentUserID,
+                                                text: newMessage
+                                            )
+                                            newMessage = ""
+                                        } catch {
+                                            print("Error sending message:", error.localizedDescription)
+                                        }
                                     }
-                                    catch{
-                                        print("error sending message:" ,error.localizedDescription)
-                                    }
+                                } label: {
+                                    Image(systemName: "paperplane.fill")
+                                        .font(.system(size: 18))
+                                        .foregroundColor(.blue)
                                 }
-                               
-                            } label: {
-                                Image(systemName: "paperplane.fill")
-                                    .font(.system(size: 18))
-                                    .foregroundColor(canSend ? .white : .gray)
-                                    .padding(10)
-                                    .background(canSend ? Color.blue : Color(.systemGray5))
-                                    .clipShape(Circle())
                             }
-                            .disabled(!canSend)
                         }
                         .padding(.horizontal)
                         .padding(.vertical, 8)
                         .background(Color(.systemBackground))
                     }
+
+
 
                 }
                 .padding()
