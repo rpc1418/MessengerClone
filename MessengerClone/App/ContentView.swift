@@ -63,6 +63,8 @@ struct ContentView: View {
                         EmailLoginView()
                     case .emailRegistrationView:
                         EmailRegistrationView()
+                    case .forgotPasswordView:
+                        ForgotPasswordView()
                     
                     }
                 }
