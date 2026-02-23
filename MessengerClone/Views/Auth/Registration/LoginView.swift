@@ -50,6 +50,15 @@ struct LoginView: View {
                 Spacer()
 
                 VStack(spacing: 20) {
+                    
+                    PrimaryButtons(
+                        title: "Sign In with Email",
+                        icon: "envelope.fill",
+                        isLoading: authViewModel.isLoading
+                    ) {
+                        router.navigate(to: .emailLogin)
+                    }
+                        
                     PrimaryButtons(
                         title: "Sign In with Phone",
                         icon: "phone.fill",
