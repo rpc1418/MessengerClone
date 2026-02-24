@@ -26,8 +26,8 @@ enum Route: Hashable {
     case reportproblemview
     case storysettingsview
     case usernamesettingsview
-    
-    
+    case emailLogin
+    case emailRegistrationView
 }
 
 

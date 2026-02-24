@@ -59,6 +59,11 @@ struct ContentView: View {
                         StorySettingsView()
                     case .usernamesettingsview:
                         UsernameSettingsView()
+                    case .emailLogin:
+                        EmailLoginView()
+                    case .emailRegistrationView:
+                        EmailRegistrationView()
+                    
                     }
                 }
         }
