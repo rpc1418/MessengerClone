@@ -15,7 +15,7 @@ struct ProfileView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var router: AppRouter
     @EnvironmentObject var themeManager: ThemeManager
-
+    
     var body: some View {
         List {
             headerSection
@@ -28,14 +28,14 @@ struct ProfileView: View {
         .scrollContentBackground(.hidden)
         .navigationTitle("Profile And Settings")
         .navigationBarTitleDisplayMode(.inline)
-//        .toolbar {
-//            ToolbarItem(placement: .topBarTrailing) {
-//                Button("Done") {
-//                    router.goBack()    // go back in NavigationStack
-//                }
-//                .font(.system(size: 17, weight: .semibold))
-//            }
-//        }
+        //        .toolbar {
+        //            ToolbarItem(placement: .topBarTrailing) {
+        //                Button("Done") {
+        //                    router.goBack()    // go back in NavigationStack
+        //                }
+        //                .font(.system(size: 17, weight: .semibold))
+        //            }
+        //        }
         .onAppear {
             viewModel.configure(from: authViewModel.appUser)
         }
@@ -43,9 +43,9 @@ struct ProfileView: View {
             viewModel.configure(from: authViewModel.appUser)
         }
     }
-
+    
     // MARK: - Sections
-
+    
     private var headerSection: some View {
         Section {
             VStack(spacing: 16) {
@@ -53,18 +53,18 @@ struct ProfileView: View {
                     Circle()
                         .strokeBorder(Color.blue.opacity(0.3), lineWidth: 6)
                         .frame(width: 168, height: 167)
-
+                    
                     Circle()
                         .fill(Color.blue.opacity(0.05))
                         .frame(width: 115, height: 115)
-
+                    
                     profileImage
                         .resizable()
                         .scaledToFill()
                         .frame(width: 115, height: 115)
                         .clipShape(Circle())
                 }
-
+                
                 Text(viewModel.displayName.isEmpty ? "User" : viewModel.displayName)
                     .font(.system(size: 24, weight: .semibold))
             }
@@ -73,21 +73,41 @@ struct ProfileView: View {
         }
         .listRowInsets(EdgeInsets())
     }
-
+    
     private var mainSettingsSection: some View {
         Section {
-            // Dark Mode toggle - stays on this screen
-            SettingsRow(
-                systemIcon: "moon.fill",
-                iconColor: Color.black,
-                title: "Dark Mode",
-                subtitle: nil,
-                accessory: .toggle($themeManager.isDarkMode)
-            )
-
-            // Active Status -> placeholder navigation
+            
+            // Theme Picker (System / Light / Dark)
+            VStack(alignment: .leading, spacing: 10) {
+                
+                HStack(spacing: 16) {
+                    ZStack {
+                        Circle()
+                            .fill(Color.black)
+                            .frame(width: 32, height: 32)
+                        
+                        Image(systemName: "moon.fill")
+                            .foregroundColor(.white)
+                            .font(.system(size: 16, weight: .semibold))
+                    }
+                    
+                    Text("Appearance")
+                    
+                    Spacer()
+                }
+                
+                Picker("", selection: $themeManager.selectedTheme) {
+                    Text("System").tag("system")
+                    Text("Light").tag("light")
+                    Text("Dark").tag("dark")
+                }
+                .pickerStyle(.segmented)
+            }
+            .padding(.vertical, 6)
+            
+            
+            // Active Status
             Button {
-                // Adjust route later if team adds a specific screen
                 router.navigate(to: .activestatusview)
             } label: {
                 SettingsRow(
@@ -98,10 +118,9 @@ struct ProfileView: View {
                     accessory: .chevron
                 )
             }
-
-            // Username row
+            
+            // Username
             Button {
-                // Example: go to developerView until an edit screen exists
                 router.navigate(to: .usernamesettingsview)
             } label: {
                 SettingsRow(
@@ -112,10 +131,9 @@ struct ProfileView: View {
                     accessory: .chevron
                 )
             }
-
-            // Phone row
+            
+            // Phone
             Button {
-                // Reuse phone login screen for now
                 router.navigate(to: .phonesettingsview)
             } label: {
                 SettingsRow(
@@ -128,7 +146,8 @@ struct ProfileView: View {
             }
         }
     }
-
+    
+    
     private var preferencesSection: some View {
         Section(header: Text("PREFERENCES")) {
             Button {
@@ -142,7 +161,7 @@ struct ProfileView: View {
                     accessory: .chevron
                 )
             }
-
+            
             Button {
                 // PeopleView is mapped to .newChat in your router
                 router.navigate(to: .newChat)
@@ -155,7 +174,7 @@ struct ProfileView: View {
                     accessory: .chevron
                 )
             }
-
+            
             Button {
                 router.navigate(to: .storysettingsview)
             } label: {
@@ -169,7 +188,7 @@ struct ProfileView: View {
             }
         }
     }
-
+    
     private var accountSection: some View {
         Section(header: Text("ACCOUNT")) {
             Button { router.navigate(to: .privacysafetyview) } label: {
@@ -181,7 +200,7 @@ struct ProfileView: View {
                     accessory: .chevron
                 )
             }
-
+            
             Button { router.navigate(to: .datasaverview) } label: {
                 SettingsRow(
                     systemIcon: "antenna.radiowaves.left.and.right",
@@ -191,7 +210,7 @@ struct ProfileView: View {
                     accessory: .chevron
                 )
             }
-
+            
             Button { router.navigate(to: .reportproblemview) } label: {
                 SettingsRow(
                     systemIcon: "exclamationmark.bubble.fill",
@@ -201,7 +220,7 @@ struct ProfileView: View {
                     accessory: .chevron
                 )
             }
-
+            
             Button { router.navigate(to: .helpcenterview) } label: {
                 SettingsRow(
                     systemIcon: "questionmark.circle.fill",
@@ -213,7 +232,7 @@ struct ProfileView: View {
             }
         }
     }
-
+    
     private var logoutSection: some View {
         Section {
             Button(role: .destructive) {
@@ -228,7 +247,7 @@ struct ProfileView: View {
             }
         }
     }
-
+    
     private var profileImage: Image {
         if let url = viewModel.photoURL,
            let data = try? Data(contentsOf: url),
@@ -253,7 +272,7 @@ struct SettingsRow: View {
     let title: String
     let subtitle: String?
     let accessory: SettingsAccessory
-
+    
     var body: some View {
         HStack(spacing: 16) {
             ZStack {
@@ -264,7 +283,7 @@ struct SettingsRow: View {
                     .foregroundColor(.white)
                     .font(.system(size: 16, weight: .semibold))
             }
-
+            
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                 if let subtitle {
@@ -273,9 +292,9 @@ struct SettingsRow: View {
                         .foregroundColor(.secondary)
                 }
             }
-
+            
             Spacer()
-
+            
             switch accessory {
             case .chevron:
                 Image(systemName: "chevron.right")

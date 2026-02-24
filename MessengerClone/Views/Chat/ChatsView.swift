@@ -104,26 +104,34 @@ private extension ChatsView {
         VStack(spacing: 6) {
             
             ZStack(alignment: .bottomTrailing) {
-                ZStack{
-                    // Avatar
-                    Circle()
-                        .fill(Color(.systemGray5))
-                        .frame(width: 52, height: 52)
-                    Image(systemName: "person.fill")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundStyle(.primary)
+                
+                // Only show avatar if NOT Your Story
+                if !isAdd {
+                    ZStack {
+                        Circle()
+                            .fill(Color(.systemGray5))
+                            .frame(width: 52, height: 52)
+                        
+                        Image(systemName: "person.fill")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(.primary)
+                    }
                 }
                 
-                // Add Story
+                // Only show plus for Your Story
                 if isAdd {
-                    Image(systemName: "plus")
-                        .font(.system(size: 20.5, weight: .bold))
-                        .offset(x: -15, y: -15)
+                    ZStack {
+                        Circle()
+                            .fill(Color(.systemGray5))
+                            .frame(width: 52, height: 52)
+                        Image(systemName: "plus")
+                            .font(.system(size: 26, weight: .bold))
+                            .foregroundColor(.primary)
+                    }
                 }
                 
-                
-                // Online indicator
-                if isOnline {
+                // Online indicator only for real users
+                if isOnline && !isAdd {
                     Circle()
                         .fill(Color.green)
                         .frame(width: 12, height: 12)
@@ -134,10 +142,11 @@ private extension ChatsView {
                         .offset(x: -3.5, y: -3.5)
                 }
             }
+            .frame(width: 52, height: 52)
             
             Text(name)
                 .font(.system(size: 13))
-                .foregroundColor(.primary)
+                .foregroundColor(.textSecondary)
                 .lineLimit(1)
                 .frame(width: 62)
                 .multilineTextAlignment(.center)

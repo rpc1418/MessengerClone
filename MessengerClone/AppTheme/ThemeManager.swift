@@ -10,10 +10,15 @@ import Combine
 @MainActor
 final class ThemeManager: ObservableObject {
     
-    @Published var isDarkMode: Bool = false
-    
+    @AppStorage("selectedTheme") var selectedTheme: String = "system"
+
     var colorScheme: ColorScheme? {
-        isDarkMode ? .dark : .light
+        switch selectedTheme {
+        case "dark": return .dark
+        case "light": return .light
+        default: return nil // system default colour
+        }
     }
 }
+
 
