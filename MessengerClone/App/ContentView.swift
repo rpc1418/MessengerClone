@@ -69,11 +69,11 @@ struct ContentView: View {
                     }
                 }
         }
-        .overlay(alignment: .bottom) {
-            Text("Stack count: \(router.path.count)")
-                .font(.caption)
-                .padding(4)
-        }
+//        .overlay(alignment: .bottom) {
+//            Text("Stack count: \(router.path.count)")
+//                .font(.caption)
+//                .padding(4)
+//        }
     }
 }
 

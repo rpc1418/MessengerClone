@@ -17,5 +17,6 @@ struct AppUser: Identifiable {
     let about: String
     let profileURL: String?
     let createdAt: Timestamp
+    let email: String?
 }
 

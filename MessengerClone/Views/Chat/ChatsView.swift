@@ -86,7 +86,7 @@ private extension ChatsView {
                 
                 storyItem(name: "Your story", isAdd: true)
                 ForEach(contactViewModel.filteredContacts(type: 0 ),id: \.objectID){
-                    contact in storyItem(name: contact.fullName ,isAdd: false)
+                    contact in storyItem(name: contact.fullName ,isAdd: false, isOnline: true)
                 }
             }
             .padding(.horizontal, 16)
