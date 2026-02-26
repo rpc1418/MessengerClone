@@ -1,5 +1,6 @@
 import FirebaseAuth
 import Foundation
+import FirebaseFirestore
 
 final class AuthService {
 
@@ -112,4 +113,16 @@ final class AuthService {
             }
         }
     }
+    
+    func checkIfEmailExists(email: String) async throws -> Bool {
+        print("Checking for email in service class...")
+
+        let snapshot = try await Firestore.firestore()
+            .collection("users")
+            .whereField("email", isEqualTo: email)
+            .getDocuments()
+
+        return !snapshot.documents.isEmpty
+
+    }    
 }
