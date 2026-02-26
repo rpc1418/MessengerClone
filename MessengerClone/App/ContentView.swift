@@ -65,7 +65,10 @@ struct ContentView: View {
                         EmailRegistrationView()
                     case .forgotPasswordView:
                         ForgotPasswordView()
-                    
+                    case .emailEntryView:
+                        EmailEntryView()
+                    case let .passwordVerification(email):
+                        PasswordVerification(email: email)
                     }
                 }
         }

@@ -263,4 +263,21 @@ final class AuthViewModel: ObservableObject {
             errorMessage = error.localizedDescription
         }
     }
+    
+    func checkEmailAndRoute(email: String) async -> Bool {
+        isLoading = true
+        errorMessage = nil
+        
+        print("Checking if email exists...")
+        
+        defer { isLoading = false }
+        
+        do {
+            return try await AuthService.shared.checkIfEmailExists(email: email)
+        } catch {
+            errorMessage = error.localizedDescription
+            print("\(error.localizedDescription)")
+            return false
+        }
+    }
 }
