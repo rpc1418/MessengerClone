@@ -15,51 +15,81 @@ struct MessageRowView: View {
     let participants: [String]
     @State var showReadByMemebers: Bool = false
     @EnvironmentObject var chatViewModel: ChatViewModel
+    
     var body: some View {
-        HStack{
-            if(isCurrentUser){
-                Spacer()
-            }
+        HStack {
+            if isCurrentUser { Spacer() }
+            
             VStack(alignment: isCurrentUser ? .trailing : .leading, spacing: 2) {
                 
-
                 HStack(alignment: .bottom, spacing: 8) {
                     
-                    if !isCurrentUser , showName {
+                    // Sender profile
+                    if !isCurrentUser, showName {
                         Image(systemName: "person.circle.fill")
                             .resizable()
                             .frame(width: 28, height: 28)
                             .clipShape(Circle())
-                    }else{
-                        Color.clear
-                                .frame(width: 28, height: 28)
+                    } else {
+                        Color.clear.frame(width: 28, height: 28)
                     }
+                    
                     VStack(alignment: isCurrentUser ? .trailing : .leading, spacing: 2) {
                         
-                        Text(message.text)
-                            .padding(10)
-                            .background(isCurrentUser ? Color.blue.opacity(0.7) : Color.gray.opacity(0.2))
-                            .cornerRadius(16)
-                        HStack{
+                        // Message bubble
+                        Group {
+                            if message.text.starts(with: "[image]") {
+                                // Image message
+                                let imageName = message.text.replacingOccurrences(of: "[image]", with: "")
+                                HStack {
+                                    Image(systemName: "photo.fill")
+                                    Text(imageName)
+                                        .lineLimit(1)
+                                        .foregroundColor(.blue)
+                                }
+                            } else if message.text.starts(with: "[file]") {
+                                // File message
+                                let fileName = message.text.replacingOccurrences(of: "[file]", with: "")
+                                HStack {
+                                    Image(systemName: "doc.fill")
+                                    Text(fileName)
+                                        .lineLimit(1)
+                                        .foregroundColor(.blue)
+                                }
+                                .padding(10)
+                                .background(Color.gray.opacity(0.2))
+                                .cornerRadius(16)
+                            } else {
+                                // Text message
+                                Text(message.text)
+                                    .padding(10)
+                                    .background(isCurrentUser ? Color.blue.opacity(0.7) : Color.gray.opacity(0.2))
+                                    .cornerRadius(16)
+                            }
+                        }
+                        
+                        // Timestamp & sender name / read receipts
+                        HStack {
                             Text(message.timestampFormatted)
                                 .font(.caption2)
                                 .foregroundColor(.gray)
                                 .padding(isCurrentUser ? .trailing : .leading, 6)
+                            
                             if showName {
-                                    Text(senderName)
-                                        .font(.caption2)
-                                        .foregroundColor(.gray)
-                                        .padding(isCurrentUser ? .trailing : .leading, 6)
-                            } else{
-                                if showReadByMemebers{
-                                        Text("ReadBy:")
-                                            .font(.caption2)
-                                            .foregroundColor(.gray)
-                                            .padding(isCurrentUser ? .trailing : .leading, 6)
-                                }
+                                Text(senderName)
+                                    .font(.caption2)
+                                    .foregroundColor(.gray)
+                                    .padding(isCurrentUser ? .trailing : .leading, 6)
+                            } else if showReadByMemebers {
+                                Text("ReadBy:")
+                                    .font(.caption2)
+                                    .foregroundColor(.gray)
+                                    .padding(isCurrentUser ? .trailing : .leading, 6)
                             }
                         }
-                        if  showReadByMemebers {
+                        
+                        // Read by members list
+                        if showReadByMemebers {
                             VStack(alignment: .leading, spacing: 4) {
                                 let readId: [String] = message.readBy.filter { $0 != chatViewModel.CurUserId }
                                 ForEach(readId, id: \.self) { userId in
@@ -70,27 +100,25 @@ struct MessageRowView: View {
                                         .padding(isCurrentUser ? .trailing : .leading, 6)
                                 }
                             }
-                            
                         }
-
                         
-                    }
+                    } // VStack
+                    
+                    // Read receipt checkmark
                     if isCurrentUser {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.caption)
-                            .foregroundStyle( Set(message.readBy) == Set(participants) ? Color.blue : Color.gray)
+                            .foregroundStyle(Set(message.readBy) == Set(participants) ? Color.blue : Color.gray)
                             .onTapGesture {
                                 showReadByMemebers.toggle()
                             }
                     }
-                }
-            }
+                    
+                } // HStack
+            } // VStack
             .id(message.id)
             
-            if(!isCurrentUser){
-                Spacer()
-            }
-        }
-        
+            if !isCurrentUser { Spacer() }
+        } // HStack
     }
 }

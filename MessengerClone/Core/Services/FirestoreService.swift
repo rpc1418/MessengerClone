@@ -83,18 +83,9 @@ final class FirestoreService {
             )
         }
 
-        let user = AppUser(
-            id: snapshot.documentID,
-            uid: data["uid"] as? String ?? "",
-            firstName: data["firstName"] as? String ?? "",
-            lastName: data["lastName"] as? String ?? "",
-            phoneNumber: data["phoneNumber"] as? String ?? "",
-            about: data["about"] as? String ?? "",
-            profileURL: data["profileURL"] as? String,
-            createdAt: data["createdAt"] as? Timestamp ?? Timestamp()
-        )
+        let user = self.decodeUser(from: data)
 
-        return user
+        return user!
     }
     
     // MARK: - Save user via email registration
@@ -148,7 +139,8 @@ final class FirestoreService {
             phoneNumber: data["phoneNumber"] as? String ?? "",
             about: data["about"] as? String ?? "",
             profileURL: data["profileURL"] as? String,
-            createdAt: data["createdAt"] as? Timestamp ?? Timestamp()
+            createdAt: data["createdAt"] as? Timestamp ?? Timestamp(),
+            email: data["email"] as? String
         )
     }
 }

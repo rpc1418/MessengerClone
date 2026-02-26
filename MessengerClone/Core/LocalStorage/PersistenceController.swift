@@ -44,6 +44,8 @@ final class PersistenceController {
         regCon.idPhNo=appUser.phoneNumber
         regCon.isReg=isReg
         regCon.gender=""
+        regCon.about=appUser.about
+        regCon.email=appUser.email
         saveContext()
     }
 

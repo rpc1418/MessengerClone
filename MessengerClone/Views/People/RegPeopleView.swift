@@ -8,6 +8,7 @@ import SwiftUI
 
 struct RegPeopleView: View {
     @EnvironmentObject var router: AppRouter
+    @EnvironmentObject private var authViewModel: AuthViewModel
     @EnvironmentObject private var viewModel: ContactsViewModel
     var body: some View {
         ZStack{
@@ -52,7 +53,23 @@ struct RegPeopleView: View {
                             }
                             .contentShape(Rectangle())
                             .onTapGesture {
-                                print(contact.fullName)
+                                Task {
+                                do {
+                                    print("tapped")
+                                    viewModel.isLoading = true
+                                    let chat = try await viewModel.createChat(
+                                        currentUserID: authViewModel.appUser!.uid,
+                                        contact: contact
+                                    )
+                                    viewModel.isLoading = false
+                                    router.navigate(to: .chat(chat: chat))
+                                    
+                                    
+                                } catch {
+                                    viewModel.isLoading = false
+                                    print("Failed to create/fetch chat:", error)
+                                }
+                            }
                             }
                         }
                         .listStyle(.plain)

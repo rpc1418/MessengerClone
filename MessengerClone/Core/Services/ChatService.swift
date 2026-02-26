@@ -70,7 +70,49 @@ final class ChatService {
                 try await group.waitForAll()
             }
         }
+    func uploadAndSendImage(chatId: String , senderId: String , data: Data) async {
+        do {
+            // Compress image (optional but recommended)
+            guard let uiImage = UIImage(data: data),
+                  let compressedData = uiImage.jpegData(compressionQuality: 0.6)
+            else { return }
+            
+            let imageName = "IMG_\(UUID().uuidString).jpg"
+            
+            
+            // Upload to Firebase Storage
+            
+            
+            
+            try await sendMessage(chatID: chatId, senderID: senderId, text: "[image]\(imageName)")
+            
+        } catch {
+            print("Image upload failed:", error.localizedDescription)
+        }
+    }
     
+    
+
+    func uploadAndSendDocument(
+        chatId: String,
+        senderId: String,
+        fileURL: URL
+    ) async {
+        
+        do {
+            let fileName = "FILE_\(UUID().uuidString)_\(fileURL.lastPathComponent)"
+            
+            // Reuse existing sendMessage
+            try await sendMessage(
+                chatID: chatId,
+                senderID: senderId,
+                text: "[file]\(fileName)"
+            )
+            
+        } catch {
+            print("Document upload failed:", error.localizedDescription)
+        }
+    }
     func listenToUserChats(userID: String) -> AsyncThrowingStream<[Chat], Error> {
             AsyncThrowingStream { continuation in
                 let query = db.collection("chats")
