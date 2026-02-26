@@ -5,6 +5,7 @@ struct HomeBottomTabView: View {
     @Binding var selectedTab: AppTab
 
     var body: some View {
+        
         HStack {
             tabButton(
                 tab: .chats,
@@ -31,6 +32,9 @@ struct HomeBottomTabView: View {
         .padding(.horizontal,80)
         .padding(.vertical, 10)
         .background(Color(.systemGray6))
+        .ignoresSafeArea(edges: .bottom)
+        .frame(height: 10)
+
     }
 
     private func tabButton(
