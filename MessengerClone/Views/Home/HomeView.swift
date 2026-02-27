@@ -12,7 +12,6 @@ struct HomeView: View {
             // STATIC TOP BAR
             HomeTopBarView(
                 selectedTab: selectedTab,
-                onProfileTap: handleProfileTap
             )
 
             // DYNAMIC CONTENT
@@ -45,7 +44,12 @@ private extension HomeView {
 
         case .discover:
             DiscoverView()
+            
+        case .profile:
+            ProfileView()
         }
+        
+        
     }
 
     func handleProfileTap() {

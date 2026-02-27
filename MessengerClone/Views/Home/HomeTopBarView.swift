@@ -1,25 +1,24 @@
 import SwiftUI
 
 struct HomeTopBarView: View {
-    @EnvironmentObject var appRouter : AppRouter
+    
     let selectedTab: AppTab
     var profileImage: Image? = nil
-    var onProfileTap: (() -> Void)? = nil
     var onFirstActionTap: (() -> Void)? = nil
-//    var onSecondActionTap: (() -> Void)? = nil
+    @EnvironmentObject var appRouter: AppRouter
 
     var body: some View {
         HStack {
             
-            // 🔹 Left: Profile + Title
+            // Left: Avatar + Title
             HStack(spacing: 12) {
-                profileButton
+                avatarView
                 titleView
             }
             
             Spacer()
             
-            // 🔹 Right Action Buttons
+            // Right Action Buttons
             HStack(spacing: 16) {
                 if let firstIcon = firstIcon {
                     actionButton(systemName: firstIcon) {
@@ -29,7 +28,7 @@ struct HomeTopBarView: View {
                 
                 if let secondIcon = secondIcon {
                     actionButton(systemName: secondIcon) {
-                        onSecondActionTap()
+                        handleSecondAction()
                     }
                 }
             }
@@ -47,11 +46,14 @@ struct HomeTopBarView: View {
 
 private extension HomeTopBarView {
     
+    // MARK: - Title
+    
     var title: String {
         switch selectedTab {
         case .chats: return "Chats"
         case .people: return "People"
         case .discover: return "Discover"
+        case .profile: return "Settings"
         }
     }
     
@@ -62,11 +64,14 @@ private extension HomeTopBarView {
             .lineLimit(1)
     }
     
+    // MARK: - Icons Logic
+    
     var firstIcon: String? {
         switch selectedTab {
         case .chats: return "camera"
         case .people: return "message"
         case .discover: return nil
+        case .profile: return nil
         }
     }
     
@@ -75,8 +80,11 @@ private extension HomeTopBarView {
         case .chats: return "square.and.pencil"
         case .people: return "person.badge.plus"
         case .discover: return nil
+        case .profile: return nil
         }
     }
+    
+    // MARK: - Components
     
     func actionButton(systemName: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
@@ -90,46 +98,46 @@ private extension HomeTopBarView {
                     .foregroundStyle(.primary)
             }
         }
-        .buttonStyle(.plain) 
-    }
-
-    
-    var profileButton: some View {
-        Button {
-            onProfileTap?()
-        } label: {
-            ZStack {
-                Circle()
-                    .fill(Color(.systemGray5))
-                    .frame(width: 40, height: 40)
-                
-                if let profileImage {
-                    profileImage
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 40, height: 40)
-                        .clipShape(Circle())
-                } else {
-                    Image(systemName: "gearshape.fill")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundStyle(.primary)
-                }
-            }
-        }
         .buttonStyle(.plain)
     }
     
-    func onSecondActionTap() {
-        switch selectedTab {
-        case .chats:
-            appRouter.navigate(to: .newChat)
-
-        case .people:
-            appRouter.navigate(to: .newChat)
-
-        case .discover:
-            break
+    // Avatar (Non-clickable)
+    var avatarView: some View {
+        ZStack {
+            Circle()
+                .fill(Color(.systemGray5))
+                .frame(width: 40, height: 40)
+            
+            if let profileImage {
+                profileImage
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 40, height: 40)
+                    .clipShape(Circle())
+            } else {
+                Image(systemName: "person.crop.circle.fill")
+                    .font(.system(size: 22))
+                    .foregroundStyle(.primary)
+            }
         }
     }
+    
+    // MARK: - Internal Actions
+    
+    func handleSecondAction() {
+        switch selectedTab {
+                case .chats:
+                    appRouter.navigate(to: .newChat)
 
+                case .people:
+                    appRouter.navigate(to: .newChat)
+
+                case .discover:
+                    break
+        case .profile:
+            break
+                }
+        
+            
+    }
 }

@@ -11,4 +11,5 @@ enum AppTab {
     case chats
     case people
     case discover
+    case profile
 }
