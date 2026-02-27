@@ -28,6 +28,9 @@ enum Route: Hashable {
     case usernamesettingsview
     case emailLogin
     case emailRegistrationView
+    case forgotPasswordView
+    case emailEntryView
+    case passwordVerification(email: String)
 }
 
 

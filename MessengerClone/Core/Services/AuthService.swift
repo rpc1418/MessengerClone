@@ -1,5 +1,6 @@
 import FirebaseAuth
 import Foundation
+import FirebaseFirestore
 
 final class AuthService {
 
@@ -97,4 +98,31 @@ final class AuthService {
     func signUpWithEmail(email: String, password: String) async throws -> AuthDataResult {
         try await Auth.auth().createUser(withEmail: email, password: password)
     }
+    
+    func sendPasswordReset(withEmail email: String) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            
+            Auth.auth().sendPasswordReset(withEmail: email) { error in
+                
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    print("Password reset email sent successfully.")
+                    continuation.resume(returning: ())
+                }
+            }
+        }
+    }
+    
+    func checkIfEmailExists(email: String) async throws -> Bool {
+        print("Checking for email in service class...")
+
+        let snapshot = try await Firestore.firestore()
+            .collection("users")
+            .whereField("email", isEqualTo: email)
+            .getDocuments()
+
+        return !snapshot.documents.isEmpty
+
+    }    
 }

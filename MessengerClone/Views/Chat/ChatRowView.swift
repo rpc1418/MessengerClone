@@ -55,10 +55,7 @@ struct ChatRowView: View {
             
             Spacer()
             
-            // ✔ Tick mark
-            Image(systemName: "checkmark.circle.fill")
-                //.font(.system(size: 18))
-                .foregroundColor(.gray.opacity(0.6))
+            
         }
         .padding(.vertical, 4) // reduced the padding
         //.listRowInsets(EdgeInsets())

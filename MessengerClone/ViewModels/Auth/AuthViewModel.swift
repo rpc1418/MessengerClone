@@ -250,4 +250,34 @@ final class AuthViewModel: ObservableObject {
             print("Registration error:", error.localizedDescription)
         }
     }
+    
+    func sendPasswordReset(email: String) async {
+        isLoading = true
+        errorMessage = nil
+        
+        defer { isLoading = false }
+        
+        do {
+            try await AuthService.shared.sendPasswordReset(withEmail: email)
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+    
+    func checkEmailAndRoute(email: String) async -> Bool {
+        isLoading = true
+        errorMessage = nil
+        
+        print("Checking if email exists...")
+        
+        defer { isLoading = false }
+        
+        do {
+            return try await AuthService.shared.checkIfEmailExists(email: email)
+        } catch {
+            errorMessage = error.localizedDescription
+            print("\(error.localizedDescription)")
+            return false
+        }
+    }
 }

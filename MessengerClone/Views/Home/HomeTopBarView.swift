@@ -110,7 +110,7 @@ private extension HomeTopBarView {
                         .frame(width: 40, height: 40)
                         .clipShape(Circle())
                 } else {
-                    Image(systemName: "person.fill")
+                    Image(systemName: "gearshape.fill")
                         .font(.system(size: 18, weight: .semibold))
                         .foregroundStyle(.primary)
                 }

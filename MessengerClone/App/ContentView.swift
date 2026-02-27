@@ -63,15 +63,20 @@ struct ContentView: View {
                         EmailLoginView()
                     case .emailRegistrationView:
                         EmailRegistrationView()
-                    
+                    case .forgotPasswordView:
+                        ForgotPasswordView()
+                    case .emailEntryView:
+                        EmailEntryView()
+                    case let .passwordVerification(email):
+                        PasswordVerification(email: email)
                     }
                 }
         }
-        .overlay(alignment: .bottom) {
-            Text("Stack count: \(router.path.count)")
-                .font(.caption)
-                .padding(4)
-        }
+//        .overlay(alignment: .bottom) {
+//            Text("Stack count: \(router.path.count)")
+//                .font(.caption)
+//                .padding(4)
+//        }
     }
 }
 

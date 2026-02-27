@@ -12,12 +12,14 @@ struct EmailLoginView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var router: AppRouter
     
+    @State private var isPressed = false
+    
     @Environment(\.dismiss) private var dismiss
     
     @State private var email = ""
     @State private var password = ""
     @State private var isSecure = true
-    
+        
     var body: some View {
         ZStack {
             
@@ -99,6 +101,30 @@ struct EmailLoginView: View {
                 .padding(.horizontal)
                 .disabled(email.isEmpty || password.isEmpty || authViewModel.isLoading)
                 .opacity(email.isEmpty || password.isEmpty ? 0.6 : 1)
+                
+                // MARK: Sign Up OPtion
+                HStack{
+                    Text("Don't have an account?")
+                        .font(.default)
+                        .underline()
+                    
+                    Button{
+                        router.navigate(to: .emailRegistrationView)
+                    } label: {
+                        Text("Sign Up !!").font(.default).fontWeight(
+                            .bold
+                        )
+                    }
+                    
+                }
+                
+                // MARK: Forgot Password Button
+                Button{
+                    router.navigate(to: .forgotPasswordView)
+                } label: {
+                    Text("Forgot Password ??").font(.default).fontWeight(.semibold).foregroundStyle(Color.white).opacity(0.7)
+                }
+                
                 
                 // MARK: Error
                 if let error = authViewModel.errorMessage {
