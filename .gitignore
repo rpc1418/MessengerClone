@@ -1,22 +1,4 @@
-# Xcode
-build/
-DerivedData/
-*.xcworkspace
+# Xcode user state
+*.xcuserstate
 xcuserdata/
 
-# Swift Packages
-.swiftpm/
-Packages/
-
-# CocoaPods
-Pods/
-
-# Firebase
-GoogleService-Info.plist
-
-# Logs and system files
-*.log
-*.DS_Store
-
-# User-specific
-*.swp
