@@ -28,8 +28,16 @@ struct HomeBottomTabView: View {
                 icon: selectedTab == .discover ? "safari.fill" : "safari",
                 title: "Discover"
             )
+            
+            Spacer()
+            
+            tabButton(
+                    tab: .profile,
+                    icon: selectedTab == .profile ? "gearshape.fill" : "gearshape",
+                    title: "Settings"
+                )
         }
-        .padding(.horizontal,80)
+        .padding(.horizontal,40)
         .padding(.vertical, 10)
         .background(Color(.systemGray6))
         .ignoresSafeArea(edges: .bottom)
