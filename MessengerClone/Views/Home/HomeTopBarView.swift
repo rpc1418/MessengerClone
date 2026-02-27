@@ -5,6 +5,7 @@ struct HomeTopBarView: View {
     let selectedTab: AppTab
     var profileImage: Image? = nil
     var onFirstActionTap: (() -> Void)? = nil
+    @EnvironmentObject var appRouter: AppRouter
 
     var body: some View {
         HStack {
@@ -124,6 +125,19 @@ private extension HomeTopBarView {
     // MARK: - Internal Actions
     
     func handleSecondAction() {
+        switch selectedTab {
+                case .chats:
+                    appRouter.navigate(to: .newChat)
+
+                case .people:
+                    appRouter.navigate(to: .newChat)
+
+                case .discover:
+                    break
+        case .profile:
+            break
+                }
         
+            
     }
 }
