@@ -23,18 +23,32 @@ struct RootView: View {
             }
 
             // Logged in, checking Firestore
-//            else if authViewModel.userExists == nil {
-//                ProgressView("Loading...")
-//            }
-//
-//            // Logged in, profile exists
-//            else if authViewModel.userExists == true {
-//                HomeView()
-//
-//            }
+            else if authViewModel.userExists == nil {
+                ZStack {
+                
+                    Image(.gradient)
+                        .resizable()
+                        .ignoresSafeArea()
+                        .scaledToFill()
+                    
+                    VStack{
+                        Spacer()
+                        ProgressView("Loading...")
+                            .padding(.bottom,100)
+                    }
+                    
+                }
+            }
+
+            // Logged in, profile exists
+            else if authViewModel.userExists == true {
+                HomeView()
+
+            }
             else {
 //                RegistrationView()
-                HomeView()
+//                HomeView()
+                Text("null view")
             }
                 
         }
