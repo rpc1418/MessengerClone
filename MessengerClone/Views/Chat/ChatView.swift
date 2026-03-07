@@ -115,9 +115,13 @@ struct ChatView: View {
                 .onTapGesture {
                     router.goBack()
                 }
+            VStack(alignment: .leading){
+                Text(chatViewModel.chatName)
+                    .font(.headline)
+                Text(chatViewModel.chatAbout)
+                    .font(.caption)
+            }
             
-            Text(chatViewModel.chatName)
-                .font(.headline)
             
             Spacer()
             

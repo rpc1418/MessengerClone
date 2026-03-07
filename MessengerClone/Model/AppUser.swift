@@ -18,5 +18,6 @@ struct AppUser: Identifiable {
     let profileURL: String?
     let createdAt: Timestamp
     let email: String?
+    let phVerified: String
 }
 

@@ -22,12 +22,13 @@ struct ContentView: View {
                         LoginView()
                     case .phoneLogin:
                         PhoneLoginView()
-                    case let .otpVerification(phone, firstName, lastName, about):
+                    case let .otpVerification(phone, firstName, lastName, about ,fromView):
                         OTPVerificationView(
                             firstName: firstName ?? "",
                             lastName: lastName ?? "",
                             about: about ?? "",
-                            phoneNumber: phone
+                            phoneNumber: phone,
+                            fromView: fromView
                         )
                     case .registration:
                         RegistrationView()
@@ -72,11 +73,11 @@ struct ContentView: View {
                     }
                 }
         }
-//        .overlay(alignment: .bottom) {
-//            Text("Stack count: \(router.path.count)")
-//                .font(.caption)
-//                .padding(4)
-//        }
+        .overlay(alignment: .bottom) {
+            Text("Stack count: \(router.path.count)")
+                .font(.caption)
+                .padding(4)
+        }
     }
 }
 

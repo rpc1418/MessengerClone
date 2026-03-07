@@ -17,6 +17,7 @@ struct OTPVerificationView: View {
     let lastName: String
     let about: String
     let phoneNumber: String
+    let fromView : String
 
     @State private var otp = ""
     @State private var resendTimer = 30
@@ -93,8 +94,8 @@ struct OTPVerificationView: View {
                         Task {
                             await viewModel.verifyOTP(otp)
 
-                            if viewModel.errorMessage == nil {
-                                if !firstName.isEmpty {
+                            if viewModel.errorMessage == nil, fromView != "PhoneLoginView" {
+                                viewModel.isLoading = true
                                     try? await FirestoreService.shared.saveUserProfile(
                                         firstName: firstName,
                                         lastName: lastName.isEmpty ? nil : lastName,
@@ -102,10 +103,18 @@ struct OTPVerificationView: View {
                                         phoneNumber: phoneNumber,
                                         isNewUser: true
                                     )
-                                    await viewModel.checkPhoneExists(phoneNumber)
-                                }
-
+//                                    await viewModel.checkPhoneExists(phoneNumber)
+//                                }
+                                
+                                await viewModel.loadUserProfile(uid: viewModel.appUser?.uid ?? "")
+                                viewModel.isLoading = false
+//                                print(viewModel.appUser?.phVerified)
+                                
+                            }
+                            if(fromView == "PhoneLoginView") {
                                 router.goToHome()
+                            }else{
+                                router.goBack()
                             }
                         }
                     }
@@ -123,7 +132,7 @@ struct OTPVerificationView: View {
                     }
                 }
                 .padding(28)
-                .background(.ultraThinMaterial)
+//                .background(.ultraThinMaterial)
                 .cornerRadius(30)
                 .shadow(radius: 25)
                 .padding(.horizontal)

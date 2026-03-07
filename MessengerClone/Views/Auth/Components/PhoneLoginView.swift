@@ -93,9 +93,11 @@ struct PhoneLoginView: View {
                                         phone: fullPhone,
                                         firstName: "",
                                         lastName: "",
-                                        about: ""
+                                        about: "",
+                                        fromView: "PhoneLoginView"
                                     )
                                 )
+//                                router.goBack()
                             }
                         }
                     }
@@ -114,7 +116,7 @@ struct PhoneLoginView: View {
                     }
                 }
                 .padding(28)
-                .background(.ultraThinMaterial)
+//                .background(.ultraThinMaterial)
                 .cornerRadius(30)
                 .shadow(radius: 25)
                 .padding(.horizontal)

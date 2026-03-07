@@ -75,7 +75,7 @@ struct EmailRegistrationView: View {
                                 .textInputAutocapitalization(.never)
                                 .autocorrectionDisabled()
                                 .padding()
-                                .background(Color.white)
+                                .background(Color(.secondarySystemBackground))
                                 .cornerRadius(14)
                             
                             HStack {
@@ -93,7 +93,7 @@ struct EmailRegistrationView: View {
                                 }
                             }
                             .padding()
-                            .background(Color.white)
+                            .background(Color(.secondarySystemBackground))
                             .cornerRadius(14)
                         }
                         
@@ -166,7 +166,7 @@ struct EmailRegistrationView: View {
                         }
                     }
                     .padding(25)
-                    .background(.ultraThinMaterial)
+//                    .background(.ultraThinMaterial)
                     .cornerRadius(30)
                     .shadow(radius: 20)
                     .padding(.horizontal)
@@ -202,6 +202,7 @@ struct EmailRegistrationView: View {
                     router.goToHome()
                 }
             } else {
+                print(authViewModel.errorMessage!)
                 router.goBack()
             }
         }
