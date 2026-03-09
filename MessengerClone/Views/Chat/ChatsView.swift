@@ -29,6 +29,11 @@ struct ChatsView: View {
             }
             .listStyle(.plain)
             .scrollContentBackground(.hidden)
+            .frame(height: CGFloat(viewModel.filteredChats.count * 90))
+            
+            .scrollDisabled(true)
+            
+            
         }
         .animation(.easeInOut(duration: 0.25), value: viewModel.searchText)
 
@@ -65,15 +70,23 @@ private extension ChatsView {
                 }
             }
         }
+//        .padding(.horizontal, 12)
+//        .frame(height: 36)
+//        .background(
+//            RoundedRectangle(cornerRadius: 10)
+//                .fill(Color(.systemGray5))
+//        )
+//        .padding(.horizontal, 16)
+//        .padding(.top, 8)
+//        .padding(.bottom, 6)
         .padding(.horizontal, 12)
         .frame(height: 36)
         .background(
-            RoundedRectangle(cornerRadius: 10)
+            RoundedRectangle(cornerRadius: 18)
                 .fill(Color(.systemGray5))
         )
-        .padding(.horizontal, 16)
+        .padding(.horizontal)
         .padding(.top, 8)
-        .padding(.bottom, 6)
     }
 }
 

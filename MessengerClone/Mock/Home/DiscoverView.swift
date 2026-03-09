@@ -16,13 +16,13 @@ struct DiscoverView: View {
             searchBar
             segmentedControl
 
-            ScrollView {
+
                 VStack(alignment: .leading, spacing: 20) {
                     recentSection
                     moreSection
                 }
                 .padding(.top, 10)
-            }
+
         }
         .background(Color(.backgroundPrimary))
     }
