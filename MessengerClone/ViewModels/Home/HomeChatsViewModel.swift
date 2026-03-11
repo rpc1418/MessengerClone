@@ -2,7 +2,7 @@ import SwiftUI
 import Combine
 
 @MainActor
-final class ChatsViewModel: ObservableObject {
+final class HomeChatsViewModel: ObservableObject {
 
     @Published var chats: [Chat] = []
     @Published var searchText: String = ""

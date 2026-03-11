@@ -64,3 +64,30 @@ struct HomeBottomTabView: View {
         }
     }
 }
+
+struct tabBariOS26: View {
+    var body: some View {
+        TabView {
+                   Tab("Home", systemImage: "house") {
+//                       ContentView(nameView: "Home")
+                   }
+                   Tab("Alerts", systemImage: "bell") {
+//                       ContentView(nameView: "Alerts")
+                   }
+                   Tab("Favorites", systemImage: "heart.fill") {
+//                       ContentView(nameView: "Favorites")
+                   }
+                   // 1.
+//                   Tab(role: .search,
+////                       content: {
+////                       ContentView(nameView: "Search")
+////                   },
+//                       label: {
+//                       Image(systemName: "magnifyingglass")
+//                       
+//                   })
+               }
+               .tabBarMinimizeBehavior(.onScrollDown)
+
+    }
+}

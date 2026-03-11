@@ -105,7 +105,8 @@ struct RegistrationView: View {
                                             phone: fullPhoneNumber,
                                             firstName: firstName,
                                             lastName: lastName.isEmpty ? nil : lastName,
-                                            about: about.isEmpty ? nil : about
+                                            about: about.isEmpty ? nil : about,
+                                            fromView: "Registration View"
                                         )
                                     )
                                 }
@@ -133,7 +134,7 @@ struct RegistrationView: View {
                         }
                     }
                     .padding(25)
-                    .background(.ultraThinMaterial)
+//                    .background(.ultraThinMaterial)
                     .cornerRadius(30)
                     .shadow(radius: 20)
                     .padding(.horizontal)

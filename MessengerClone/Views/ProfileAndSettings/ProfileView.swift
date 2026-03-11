@@ -24,6 +24,8 @@ struct ProfileView: View {
             accountSection
             logoutSection
         }
+        .frame(height: CGFloat(1450))
+        .scrollDisabled(true)
         .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
         .navigationTitle("Profile And Settings")

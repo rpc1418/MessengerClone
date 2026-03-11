@@ -23,10 +23,14 @@ struct RegPeopleView: View {
                             prompt: Text("Type name or number here")
                         )
                     }
-                    .font(.headline)
-                    .padding()
-                    .background(Color.foreground.opacity(0.1))
-                    .padding(.top,1)
+                    .padding(.horizontal, 12)
+                    .frame(height: 36)
+                    .background(
+                        RoundedRectangle(cornerRadius: 18)
+                            .fill(Color(.systemGray5))
+                    )
+                    .padding(.horizontal)
+                    .padding(.top, 8)
                     if viewModel.isLoading{
                         Spacer()
                         Text("Loading..")

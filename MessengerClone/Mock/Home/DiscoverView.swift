@@ -16,13 +16,13 @@ struct DiscoverView: View {
             searchBar
             segmentedControl
 
-            ScrollView {
+
                 VStack(alignment: .leading, spacing: 20) {
                     recentSection
                     moreSection
                 }
                 .padding(.top, 10)
-            }
+
         }
         .background(Color(.backgroundPrimary))
     }
@@ -121,7 +121,7 @@ private extension DiscoverView {
                     name: "Microsoft",
                     category: "Science, Technology & Engineering",
                     description: "Our mission is to empower every person...",
-                    systemImage: "windows.logo",
+                    systemImage: "square.grid.2x2",
                     color: .blue
                 )
 

@@ -37,12 +37,12 @@ final class FirestoreService {
         
         let snapshot = try await userRef.getDocument()
         
-        if snapshot.exists && !isNewUser {
+        if snapshot.exists  {
             print("Existing user - No update needed...")
-//            try await userRef.updateData([
-//                "lastLogin": Timestamp(),
-//                "phoneNumber": normalizedPhone
-//            ])
+            try await userRef.setData([
+                "pfVerified": "Verified"
+            ], merge: true)
+            
         } else {
             print("New user registration")
             let uid = Auth.auth().currentUser?.uid
@@ -140,7 +140,8 @@ final class FirestoreService {
             about: data["about"] as? String ?? "",
             profileURL: data["profileURL"] as? String,
             createdAt: data["createdAt"] as? Timestamp ?? Timestamp(),
-            email: data["email"] as? String
+            email: data["email"] as? String,
+            phVerified: data["pfVerified"] as? String ?? "not Verified"
         )
     }
 }

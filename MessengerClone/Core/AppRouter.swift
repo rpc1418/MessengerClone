@@ -10,7 +10,7 @@ import SwiftUI
 enum Route: Hashable {
     case login
     case phoneLogin
-    case otpVerification(phone: String, firstName: String?, lastName: String?, about: String?)
+    case otpVerification(phone: String, firstName: String?, lastName: String?, about: String? , fromView: String)
     case registration
     case home
     case newChat

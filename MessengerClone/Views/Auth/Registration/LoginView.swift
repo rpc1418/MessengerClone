@@ -95,8 +95,11 @@ struct LoginView: View {
                     }
                     
                     Button {
-                        sheetForAuth.toggle()
-                        print("SheetForAuth: \(sheetForAuth)")
+//                        sheetForAuth.toggle()
+                        
+//                        print("SheetForAuth: \(sheetForAuth)")
+                        router.navigate(to: .emailRegistrationView)
+                        
                     } label: {
                         Text("Create New Account")
                             .font(.headline)
@@ -109,7 +112,7 @@ struct LoginView: View {
                     }
                 }
                 .padding(28)
-                .background(.ultraThinMaterial)
+//                .background(.ultraThinMaterial)
                 .cornerRadius(30)
                 .shadow(radius: 20)
                 .padding(.horizontal)

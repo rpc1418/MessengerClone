@@ -21,6 +21,7 @@ class ChatViewModel: ObservableObject {
     private var messageStreamTask: Task<Void, Never>?
     var isLoading: Bool = true
     var chatName: String = ""
+    var chatAbout: String = ""
     
     init(chat: Chat, CurUserId: String){
         self.chat = chat
@@ -29,7 +30,7 @@ class ChatViewModel: ObservableObject {
         isLoading = false
     }
     
-    func createGroupName() -> String{
+    func createChatName() -> String{
         if(chat.isGroup){
             return chat.name ?? "dummyname"
         }else{
@@ -43,6 +44,29 @@ class ChatViewModel: ObservableObject {
         }
         
     }
+    func createChatAbout() -> String{
+        if(chat.isGroup){
+            var about = ""
+            participants.forEach({ (user) in
+                if user.id != CurUserId{
+                    about.append(user.name+",")
+                }
+            })
+            if !about.isEmpty {
+                about = String(about.dropLast())
+            }
+            return about
+        }else{
+            var about = ""
+            participants.forEach({ (user) in
+                if user.id != CurUserId{
+                    about.append(user.about)
+                }
+            })
+            return about
+        }
+        
+    }
     
     func getName(userId: String) -> String{
         return participants.first(where: { $0.id == userId })?.name ?? "Unknown"
@@ -52,16 +76,17 @@ class ChatViewModel: ObservableObject {
         for participant in  chat.participants {
             if participant != CurUserId {
                 if let regParticipant = PersistenceController.shared.fetUserById(id: participant){
-                    participants.append(chatuser(id: regParticipant.databaseId ?? participant, name: regParticipant.firstName ?? "UnknownFromData"))
+                    participants.append(chatuser(id: regParticipant.databaseId ?? participant, name: regParticipant.firstName ?? "UnknownFromData", about: regParticipant.about ?? ""))
                     
                 } else {
-                    participants.append(chatuser(id: participant, name: "Unknown"))
+                    participants.append(chatuser(id: participant, name: "Unknown", about: "about"))
                     
                 }
                 
             }
         }
-        self.chatName = createGroupName()
+        self.chatName = createChatName()
+        self.chatAbout = createChatAbout()
     }
     
     func startListeningToMsgs() {
@@ -120,4 +145,5 @@ class ChatViewModel: ObservableObject {
 struct chatuser{
     let id: String
     let name: String
+    let about: String
 }

@@ -26,11 +26,18 @@ struct RootView: View {
             else if authViewModel.userExists == nil {
                 ZStack {
                 
-                    Image(.gradient)
-                        .resizable()
-                        .ignoresSafeArea()
-                        .scaledToFill()
-                    
+//                    Image(.gradient)
+//                        .resizable()
+//                        .ignoresSafeArea()
+//                        .scaledToFill()
+//                    Button(
+//                        action: {
+//                            authViewModel.signOut()
+//                        }
+//                    ){
+//                        Text("Sign Out")
+//                    }
+//                    
                     VStack{
                         Spacer()
                         ProgressView("Loading...")
@@ -48,13 +55,21 @@ struct RootView: View {
             else {
 //                RegistrationView()
 //                HomeView()
-                Text("null view")
+                Text("No User From this number")
+                Button(
+                    action: {
+                        authViewModel.signOut()
+                    }
+                ){
+                    Text("Sign Out")
+                }
+                
             }
                 
         }
         .onAppear {
-            print("RootView: currentUser = \(authViewModel.currentUser?.uid ?? nil)")
-            print("RootView: userExists = \(authViewModel.userExists ?? nil)")
+//            print("RootView: currentUser = \(authViewModel.currentUser?.uid ?? nil)")
+//            print("RootView: userExists = \(authViewModel.userExists ?? nil)")
         }
     }
 }

@@ -13,7 +13,9 @@ struct HomeTopBarView: View {
             // Left: Avatar + Title
             HStack(spacing: 12) {
                 avatarView
+                    .glassEffect()
                 titleView
+                    .glassEffect()
             }
             
             Spacer()
@@ -24,23 +26,25 @@ struct HomeTopBarView: View {
                     actionButton(systemName: firstIcon) {
                         onFirstActionTap?()
                     }
+                    .glassEffect()
                 }
                 
                 if let secondIcon = secondIcon {
                     actionButton(systemName: secondIcon) {
                         handleSecondAction()
                     }
+                    .glassEffect()
                 }
             }
         }
         .padding(.horizontal)
         .padding(.top, 12)
         .padding(.bottom, 8)
-        .background(Color(.systemBackground))
-        .overlay(
-            Divider(),
-            alignment: .bottom
-        )
+//        .background(Color(.systemBackground))
+//        .overlay(
+//            Divider(),
+//            alignment: .bottom
+//        )
     }
 }
 
@@ -62,6 +66,7 @@ private extension HomeTopBarView {
             .font(.system(size: 30, weight: .bold))
             .foregroundStyle(.primary)
             .lineLimit(1)
+            .padding(10)
     }
     
     // MARK: - Icons Logic
@@ -89,13 +94,14 @@ private extension HomeTopBarView {
     func actionButton(systemName: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             ZStack {
-                Circle()
-                    .fill(Color(.systemGray5))
-                    .frame(width: 40, height: 40)
+//                Circle()
+//                    .fill(Color(.systemGray5))
+//                    .frame(width: 40, height: 40)
                 
                 Image(systemName: systemName)
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.system(size: 22, weight: .semibold))
                     .foregroundStyle(.primary)
+                    .padding(15)
             }
         }
         .buttonStyle(.plain)
@@ -104,9 +110,7 @@ private extension HomeTopBarView {
     // Avatar (Non-clickable)
     var avatarView: some View {
         ZStack {
-            Circle()
-                .fill(Color(.systemGray5))
-                .frame(width: 40, height: 40)
+            
             
             if let profileImage {
                 profileImage
@@ -115,9 +119,12 @@ private extension HomeTopBarView {
                     .frame(width: 40, height: 40)
                     .clipShape(Circle())
             } else {
-                Image(systemName: "person.crop.circle.fill")
-                    .font(.system(size: 22))
+                Image(systemName: "person.fill")
+                    .font(.system(size: 25))
                     .foregroundStyle(.primary)
+                    .padding(15)
+//                    .glassEffect()
+                
             }
         }
     }

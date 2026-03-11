@@ -57,7 +57,7 @@ final class AuthViewModel: ObservableObject {
         }
     }
     
-    private func loadUserProfile(uid: String) async {
+     func loadUserProfile(uid: String) async {
         do {
             // Try phone lookup first for existing users
             if let phone = currentUser?.phoneNumber {
@@ -126,7 +126,7 @@ final class AuthViewModel: ObservableObject {
         isLoading = false
     }
 
-    func checkPhoneExists(_ phoneNumber: String) async {
+    func checkPhoneExists(_ phoneNumber: String) async -> Bool?{
         let normalizedPhone = FirestoreService.shared.normalizePhone(phoneNumber)
 
         do {
@@ -134,13 +134,14 @@ final class AuthViewModel: ObservableObject {
                 .collection("users")
                 .document(normalizedPhone)
                 .getDocument()
-
             userExists = doc.exists
             appUser = try await FirestoreService.shared.fetchUserData(phoneNumber: phoneNumber)
             print("Firestore userExists =", doc.exists)
+            return userExists
         } catch {
             print("Firestore check failed:", error)
             userExists = false
+            return userExists
         }
     }
     
@@ -210,6 +211,10 @@ final class AuthViewModel: ObservableObject {
         defer { isLoading = false }
         
         do {
+            if await self.checkPhoneExists(phoneNumber)!{
+                errorMessage = "Phone number already registered."
+                return
+            }
             // Create Firebase Auth user
             let result = try await AuthService.shared.signUpWithEmail(
                 email: email,

@@ -88,7 +88,8 @@ class ContactsViewModel: ObservableObject {
                             about: "",
                             profileURL: "",
                             createdAt: Timestamp(),
-                            email: ""
+                            email: "",
+                            phVerified: ""
                         )
                         persistence.createRegCon(appUser: dummyUser, isReg: false)
                     }
