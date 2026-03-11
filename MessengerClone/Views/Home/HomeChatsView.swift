@@ -1,11 +1,11 @@
 import SwiftUI
 import FirebaseFirestore
 
-struct ChatsView: View {
+struct HomeChatsView: View {
 
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var appRouter: AppRouter
-    @StateObject private var viewModel = ChatsViewModel()
+    @StateObject private var viewModel = HomeChatsViewModel()
     @EnvironmentObject var contactViewModel: ContactsViewModel
 
     var body: some View {
@@ -50,7 +50,7 @@ struct ChatsView: View {
 }
 
 
-private extension ChatsView {
+private extension HomeChatsView {
 
     var searchBar: some View {
         HStack(spacing: 8) {
@@ -90,7 +90,7 @@ private extension ChatsView {
     }
 }
 
-private extension ChatsView {
+private extension HomeChatsView {
     
     
     var storiesSection: some View {

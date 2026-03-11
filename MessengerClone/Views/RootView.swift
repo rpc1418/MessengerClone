@@ -30,7 +30,14 @@ struct RootView: View {
 //                        .resizable()
 //                        .ignoresSafeArea()
 //                        .scaledToFill()
-                    
+//                    Button(
+//                        action: {
+//                            authViewModel.signOut()
+//                        }
+//                    ){
+//                        Text("Sign Out")
+//                    }
+//                    
                     VStack{
                         Spacer()
                         ProgressView("Loading...")
