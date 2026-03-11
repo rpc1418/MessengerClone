@@ -70,7 +70,7 @@ private extension HomeView {
         ZStack{
             switch selectedTab  {
             case .chats:
-                ChatsView()
+                HomeChatsView()
     //            Button("Sign out"){
     //                authViewModel.signOut()
     //            }
