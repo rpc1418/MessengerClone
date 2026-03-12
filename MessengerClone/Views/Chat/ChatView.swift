@@ -97,7 +97,7 @@ struct ChatView: View {
                     }
                     
                 case .failure(let error):
-                    print("Document picker error:", error.localizedDescription)
+                   
                 }
             }
         } else {

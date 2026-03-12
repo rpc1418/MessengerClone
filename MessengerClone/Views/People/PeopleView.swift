@@ -70,13 +70,12 @@ struct PeopleView: View {
                             .background(Color.foreground.opacity(0.1))
                             .padding(.top,1)
                             Button("Create Group"){
-//                                print(viewModel.selectedContactIDs)
                                 Task{
                                     do{
                                         let chat = try await viewModel.createGroupChat(groupName: groupName, CurUserID: authViewModel.appUser!.uid)
                                         router.navigate(to: .chat(chat: chat))
                                     } catch {
-                                        print(error)
+                                      
                                     }
                                 }
                                 
@@ -91,7 +90,7 @@ struct PeopleView: View {
                                         onTap: { tappedContact in
                                             Task {
                                                 do {
-                                                    print("tapped")
+                                                    
                                                     viewModel.isLoading = true
                                                     let chat = try await viewModel.createChat(
                                                         currentUserID: authViewModel.appUser!.uid,
@@ -103,7 +102,7 @@ struct PeopleView: View {
                                                     
                                                 } catch {
                                                     viewModel.isLoading = false
-                                                    print("Failed to create/fetch chat:", error)
+                                                   
                                                 }
                                             }
                                         },

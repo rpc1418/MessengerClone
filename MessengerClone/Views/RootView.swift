@@ -19,25 +19,12 @@ struct RootView: View {
             // Not logged in
             if authViewModel.currentUser == nil {
                 LoginView()
-//                    .environmentObject(authViewModel)
             }
 
             // Logged in, checking Firestore
             else if authViewModel.userExists == nil {
                 ZStack {
-                
-//                    Image(.gradient)
-//                        .resizable()
-//                        .ignoresSafeArea()
-//                        .scaledToFill()
-//                    Button(
-//                        action: {
-//                            authViewModel.signOut()
-//                        }
-//                    ){
-//                        Text("Sign Out")
-//                    }
-//                    
+           
                     VStack{
                         Spacer()
                         ProgressView("Loading...")
@@ -53,8 +40,6 @@ struct RootView: View {
 
             }
             else {
-//                RegistrationView()
-//                HomeView()
                 Text("No User From this number")
                 Button(
                     action: {
@@ -67,33 +52,7 @@ struct RootView: View {
             }
                 
         }
-        .onAppear {
-//            print("RootView: currentUser = \(authViewModel.currentUser?.uid ?? nil)")
-//            print("RootView: userExists = \(authViewModel.userExists ?? nil)")
-        }
+      
     }
 }
 
-
-//import SwiftUI
-//import FirebaseAuth
-//
-//struct RootView: View {
-//    @EnvironmentObject var authViewModel: AuthViewModel
-//    @EnvironmentObject var appRouter: AppRouter
-//
-//    var body: some View {
-//        Group {
-//            if authViewModel.currentUser == nil {
-//                LoginView()
-//            }
-//            else {
-//                HomeView()
-//            }
-//        }
-//        .onAppear {
-//            print("RootView: currentUser = \(authViewModel.currentUser?.uid ?? nil)")
-//            print("RootView: userExists = \(authViewModel.userExists ?? nil)")
-//        }
-//    }
-//}

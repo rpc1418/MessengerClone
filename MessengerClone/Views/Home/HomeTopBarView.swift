@@ -40,11 +40,6 @@ struct HomeTopBarView: View {
         .padding(.horizontal)
         .padding(.top, 12)
         .padding(.bottom, 8)
-//        .background(Color(.systemBackground))
-//        .overlay(
-//            Divider(),
-//            alignment: .bottom
-//        )
     }
 }
 
@@ -94,9 +89,6 @@ private extension HomeTopBarView {
     func actionButton(systemName: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             ZStack {
-//                Circle()
-//                    .fill(Color(.systemGray5))
-//                    .frame(width: 40, height: 40)
                 
                 Image(systemName: systemName)
                     .font(.system(size: 22, weight: .semibold))
@@ -123,7 +115,6 @@ private extension HomeTopBarView {
                     .font(.system(size: 25))
                     .foregroundStyle(.primary)
                     .padding(15)
-//                    .glassEffect()
                 
             }
         }

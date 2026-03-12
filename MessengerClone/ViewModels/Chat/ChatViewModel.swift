@@ -98,7 +98,6 @@ class ChatViewModel: ObservableObject {
                     self.messages = msgs
                 }
             } catch {
-                print("Failed to listen to messages:", error)
             }
         }
     }

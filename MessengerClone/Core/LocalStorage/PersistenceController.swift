@@ -60,10 +60,6 @@ final class PersistenceController {
         return []
     }
 
-    func updateRegCon(regCon: RegisteredContact){
-        
-        saveContext()
-    }
    
     func fetUserById(id: String)->RegisteredContact?{
         let fetchReq: NSFetchRequest<RegisteredContact> = RegisteredContact.fetchRequest()

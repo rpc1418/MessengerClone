@@ -10,14 +10,11 @@ final class AuthService {
     private let verificationIDKey = "firebase_verification_id"
 
     func sendOTP(to phoneNumber: String) async throws {
-        print("Sending OTP to \(phoneNumber)")
 
         #if targetEnvironment(simulator)
         Auth.auth().settings?.isAppVerificationDisabledForTesting = true
         #endif
-        // Simulator testing
-//        Auth.auth().settings?.isAppVerificationDisabledForTesting = true
-
+        
         try await withCheckedThrowingContinuation({ (continuation: CheckedContinuation<Void, Error>) in
             PhoneAuthProvider.provider()
                 .verifyPhoneNumber(phoneNumber, uiDelegate: nil) { verificationID, error in
@@ -40,7 +37,6 @@ final class AuthService {
 
                     UserDefaults.standard.set(verificationID, forKey: self.verificationIDKey)
 
-                    print("verificationID saved")
                     continuation.resume()
                 }
         }
@@ -70,9 +66,7 @@ final class AuthService {
         Auth.auth().settings?.isAppVerificationDisabledForTesting = false
     }
     
-//    func signInWithEmail(email: String, password: String) async throws {
-//        try await Auth.auth().signIn(withEmail: email, password: password)
-//    }
+
     
     func signInWithEmail(email: String, password: String) async throws {
         let auth = Auth.auth()
@@ -84,17 +78,9 @@ final class AuthService {
         // EXPLICIT EmailAuthProvider credential - bypasses corruption
         let emailCredential = EmailAuthProvider.credential(withEmail: email, password: password)
         let result = try await auth.signIn(with: emailCredential)
-        print("Email login success: \(result.user.uid)")
     }
     
-//    func signUpWithEmaill(email: String, password: String) async throws {
-//        let auth = Auth.auth()
-//        
-//        let result = try await auth.createUser(withEmail: email, password: password)
-//        
-//        print("Registered with email: \(result.user.uid)")
-//    }
-    
+
     func signUpWithEmail(email: String, password: String) async throws -> AuthDataResult {
         try await Auth.auth().createUser(withEmail: email, password: password)
     }
@@ -107,7 +93,7 @@ final class AuthService {
                 if let error = error {
                     continuation.resume(throwing: error)
                 } else {
-                    print("Password reset email sent successfully.")
+                   
                     continuation.resume(returning: ())
                 }
             }
@@ -115,7 +101,7 @@ final class AuthService {
     }
     
     func checkIfEmailExists(email: String) async throws -> Bool {
-        print("Checking for email in service class...")
+        
 
         let snapshot = try await Firestore.firestore()
             .collection("users")

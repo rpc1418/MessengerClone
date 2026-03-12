@@ -59,7 +59,6 @@ struct RegPeopleView: View {
                             .onTapGesture {
                                 Task {
                                 do {
-                                    print("tapped")
                                     viewModel.isLoading = true
                                     let chat = try await viewModel.createChat(
                                         currentUserID: authViewModel.appUser!.uid,
@@ -71,7 +70,6 @@ struct RegPeopleView: View {
                                     
                                 } catch {
                                     viewModel.isLoading = false
-                                    print("Failed to create/fetch chat:", error)
                                 }
                             }
                             }
@@ -91,7 +89,6 @@ struct RegPeopleView: View {
                    HStack {
                        Spacer()
                        Button {
-                           print("refreshing")
                            Task {
                                await viewModel.requestAndSyncContacts()
                            }

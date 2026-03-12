@@ -30,14 +30,6 @@ struct ProfileView: View {
         .scrollContentBackground(.hidden)
         .navigationTitle("Profile And Settings")
         .navigationBarTitleDisplayMode(.inline)
-        //        .toolbar {
-        //            ToolbarItem(placement: .topBarTrailing) {
-        //                Button("Done") {
-        //                    router.goBack()    // go back in NavigationStack
-        //                }
-        //                .font(.system(size: 17, weight: .semibold))
-        //            }
-        //        }
         .onAppear {
             viewModel.configure(from: authViewModel.appUser)
         }

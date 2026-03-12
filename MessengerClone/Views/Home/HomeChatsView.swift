@@ -70,15 +70,6 @@ private extension HomeChatsView {
                 }
             }
         }
-//        .padding(.horizontal, 12)
-//        .frame(height: 36)
-//        .background(
-//            RoundedRectangle(cornerRadius: 10)
-//                .fill(Color(.systemGray5))
-//        )
-//        .padding(.horizontal, 16)
-//        .padding(.top, 8)
-//        .padding(.bottom, 6)
         .padding(.horizontal, 12)
         .frame(height: 36)
         .background(

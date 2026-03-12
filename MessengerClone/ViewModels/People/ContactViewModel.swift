@@ -258,7 +258,6 @@ class ContactsViewModel: ObservableObject {
         
         targetParticipants.append(CurUserID)
         
-        print(targetParticipants)
         
         if let existingChat = chats.first(where: { chat in
             chat.participants.count == targetParticipants.count &&

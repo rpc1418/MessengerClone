@@ -33,18 +33,14 @@ final class FirestoreService {
         let normalizedPhone = normalizePhone(phoneNumber)
         let userRef = db.collection("users").document(normalizedPhone)
         
-        print("Firestore: Phone document \(normalizedPhone)")
-        
         let snapshot = try await userRef.getDocument()
         
         if snapshot.exists  {
-            print("Existing user - No update needed...")
             try await userRef.setData([
                 "pfVerified": "Verified"
             ], merge: true)
             
         } else {
-            print("New user registration")
             let uid = Auth.auth().currentUser?.uid
             
             let userData: [String: Any] = [
@@ -57,7 +53,6 @@ final class FirestoreService {
                 "profileURL": nil as String?
             ]
             try await userRef.setData(userData, merge: true)
-            print("Profile created: users/\(normalizedPhone)")
         }
     }
 
@@ -104,7 +99,6 @@ final class FirestoreService {
             let snapshot = try await docRef.getDocument()
 
             if snapshot.exists {
-                print("User already exists.")
                 return
             }
 
@@ -123,8 +117,6 @@ final class FirestoreService {
             }
 
             try await docRef.setData(data)
-
-            print("New user created with phoneNumber as document ID.")
     }
     
     

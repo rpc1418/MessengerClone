@@ -19,31 +19,14 @@ final class AuthViewModel: ObservableObject {
 
     init() {
         setupAuthListener()
-        print("AuthViewModel: Initialized")
     }
 
     private func setupAuthListener() {
-//        authListener = Auth.auth().addStateDidChangeListener { [weak self] _, user in
-//            guard let self else { return }
-//
-//            print("Auth state changed:", user?.uid ?? "nil")
-//            self.currentUser = user
-//
-//            // Reset state
-//            self.userExists = nil
-//
-//            // If logged in -> check Firestore
-//            if let phone = user?.phoneNumber {
-//                Task {
-//                    await self.checkPhoneExists(phone)
-//                }
-//            }
-//        }
+
         
         authListener = Auth.auth().addStateDidChangeListener { [weak self] _, user in
             guard let self else { return }
             
-            print("Auth state changed:", user?.uid ?? "nil")
             self.currentUser = user
             
             self.userExists = nil
@@ -82,7 +65,6 @@ final class AuthViewModel: ObservableObject {
                 }
             }
         } catch {
-            print("Profile load failed:", error)
         }
     }
 
@@ -90,7 +72,6 @@ final class AuthViewModel: ObservableObject {
         try? Auth.auth().signOut()
         currentUser = nil
         userExists = nil
-        print("Signed out")
     }
 
     deinit {
@@ -136,10 +117,8 @@ final class AuthViewModel: ObservableObject {
                 .getDocument()
             userExists = doc.exists
             appUser = try await FirestoreService.shared.fetchUserData(phoneNumber: phoneNumber)
-            print("Firestore userExists =", doc.exists)
             return userExists
         } catch {
-            print("Firestore check failed:", error)
             userExists = false
             return userExists
         }
@@ -168,13 +147,7 @@ final class AuthViewModel: ObservableObject {
             // On success, Auth listener will automatically update my currentUser
             
         } catch let error as NSError {
-            
-            print("FULL ERROR DEBUG:")
-                print("Domain: \(error.domain)")
-                print("Code: \(error.code)")
-                print("Description: \(error.localizedDescription)")
-                print("UserInfo: \(error.userInfo)")
-            
+           
             switch AuthErrorCode(rawValue: error.code) {
                 
             case .userNotFound:
@@ -188,10 +161,10 @@ final class AuthViewModel: ObservableObject {
                 
             default:
                 errorMessage = error.localizedDescription
-                print("The other error is: ", error.localizedDescription)
+                
             }
             
-            print("Auth error:", errorMessage)
+           
         }
     }
     
@@ -233,8 +206,6 @@ final class AuthViewModel: ObservableObject {
                 email: email
             )
             
-            print("Email registration successful.")
-            
         } catch let error as NSError {
             
             switch AuthErrorCode(rawValue: error.code) {
@@ -251,8 +222,6 @@ final class AuthViewModel: ObservableObject {
             default:
                 errorMessage = error.localizedDescription
             }
-            
-            print("Registration error:", error.localizedDescription)
         }
     }
     
@@ -273,15 +242,12 @@ final class AuthViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
         
-        print("Checking if email exists...")
-        
         defer { isLoading = false }
         
         do {
             return try await AuthService.shared.checkIfEmailExists(email: email)
         } catch {
             errorMessage = error.localizedDescription
-            print("\(error.localizedDescription)")
             return false
         }
     }

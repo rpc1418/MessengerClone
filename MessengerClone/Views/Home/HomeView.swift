@@ -42,21 +42,13 @@ struct HomeView: View {
                             .background(Color(.systemBackground))
                     }
                 }
-//            tabBariOS26()
         }
-//            .tabBarMinimizeBehavior(.onScrollDown)
             
             // STATIC TOP BAR
             HomeTopBarView(
                 selectedTab: selectedTab,
             )
         .navigationBarHidden(true)
-//        .safeAreaInset(edge: .bottom) {
-////            HomeBottomTabView(selectedTab: $selectedTab)
-////            tabBariOS26()
-//            
-//                
-//            }
         }
         .ignoresSafeArea(.keyboard)
     }
@@ -71,9 +63,6 @@ private extension HomeView {
             switch selectedTab  {
             case .chats:
                 HomeChatsView()
-    //            Button("Sign out"){
-    //                authViewModel.signOut()
-    //            }
 
             case .people:
                 RegPeopleView()
